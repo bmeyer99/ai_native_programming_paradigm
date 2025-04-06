@@ -14,14 +14,50 @@ The goal is to deliver these critical features incrementally, providing early va
 *   **Scope:**
     *   Implement core metadata schema (`metadata-schema.md`).
     *   Implement basic AI confidence scoring models (e.g., calibrated softmax probability, simple OOD heuristics) within the AI Integration Service.
-    *   Implement the IDE Integration Layer/Gateway (basic version).
-    *   Implement basic visual indicators (color coding, icons) in the IDE extension (`tool-integration.md`).
+    *   Implement the IDE Integration Layer/Gateway (v1).
+    *   Implement basic visual indicators (color coding, icons) in the VSCode IDE extension (`tool-integration.md`).
     *   Implement basic hover-over details panel (`interaction-model.md`).
     *   Implement basic configuration for warning thresholds.
-    *   Focus on a single target IDE (e.g., VSCode).
 *   **Value Proposition:** Early visibility into AI generation confidence, enabling developers to focus review efforts.
 *   **Dependencies:** Core ANRF representation, basic AI generation capabilities, Metadata Store API, basic IDE extension framework.
 
+#### Phase 1 Deployment & Adoption Details
+
+*   **Deployment Plan:**
+    *   **IDE Integration Layer/Gateway (v1):** Deploy as a containerized service (e.g., Docker) in a cloud environment (e.g., AWS ECS/Kubernetes). Initial deployment focused on internal development/testing environment.
+    *   **VSCode Extension:** Distribute initially via a private VSIX file for internal alpha testing. Plan for eventual publication to a private marketplace or the official VSCode Marketplace upon stabilization.
+*   **Integration Strategy:**
+    *   Integrate with the initial developer workflow where AI generates code (ANRF). The extension will automatically request confidence scores for newly generated/modified ANRF segments.
+    *   Ensure the Gateway authenticates securely with backend services (AI Confidence Service, Metadata Store).
+    *   Minimize disruption by making indicators non-intrusive and providing clear documentation.
+*   **Training & Support:**
+    *   **Documentation:** Create a concise guide explaining the meaning of confidence indicators (colors, icons), how to interpret the hover panel, and basic configuration options. Include troubleshooting steps for connection issues.
+    *   **Tutorial:** Develop a short video or interactive tutorial demonstrating the feature within VSCode.
+    *   **Support Channel:** Establish a dedicated channel (e.g., Slack, Teams) for early adopters to ask questions and report issues.
+*   **Feedback Mechanisms:**
+    *   **In-Tool Feedback:** Implement a simple feedback command within the VSCode extension (e.g., "Report Issue with Confidence Score") that allows users to submit comments linked to the current context.
+    *   **Dedicated Channel:** Encourage feedback submission through the established support channel.
+    *   **Surveys:** Conduct short, targeted surveys after the initial alpha period to gather structured feedback on usability, performance, and perceived value.
+
+
+*   **Decision Gate Criteria (Alpha -> Beta):** Progression to a broader beta phase requires meeting the following criteria based on internal alpha testing results:
+    *   **Stability:**
+        *   No critical (P0/P1) bugs identified in the VSCode extension or Gateway.
+        *   Gateway uptime > 99.5% during the testing period.
+        *   WebSocket disconnection rate < 1%.
+    *   **Performance:**
+        *   Average confidence score display latency < 500ms (P95).
+        *   Average hover panel display latency < 100ms (P95).
+        *   No significant performance degradation reported by > 10% of alpha testers.
+    *   **Usability & Value:**
+        *   Average rating for "intuitiveness of visual indicators" >= 3.5/5.
+        *   Average rating for "usefulness of hover panel information" >= 3.5/5.
+        *   Average rating for "likelihood to use daily" >= 3.0/5.
+        *   Qualitative feedback indicates the core value proposition (visibility into confidence) is being met for the majority of testers.
+        *   No major usability blockers identified by > 20% of testers.
+    *   **Feedback:**
+        *   Feedback mechanisms (in-tool command, channel) are functional and used by testers.
+        *   A clear plan exists to address the top 3-5 feedback themes identified during the alpha.
 ### Phase 2: Enhanced Confidence & Basic Assistance
 
 *   **Objective:** Introduce more robust confidence measures and initial verification assistance suggestions.

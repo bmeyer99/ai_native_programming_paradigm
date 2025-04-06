@@ -1,224 +1,267 @@
-# Developer Experience Design for Confidence Scoring & Verification Assistance
+# Interaction Model for Phase 1 Confidence Scoring
 
-## 1. Experience Principles
+## 1. Visual Feedback System
 
-### 1.1. Core Principles
+### 1.1. Color Coding Design
 
-1. **Progressive Enhancement**
-   - Start with essential confidence indicators (Phase 1)
-   - Add verification assistance features gradually (Phase 2)
-   - Build to full workflow integration (Phase 3)
-   - Maintain consistent interaction patterns across phases
+The color scheme is designed for intuitive understanding and accessibility:
 
-2. **Progressive Disclosure**
-   - Essential information visible by default
-   - Details available through progressive interaction
-   - Context-sensitive help and explanations
-   - Customizable detail levels based on user preference
+*   **Green (#2ECC71):**
+    *   Represents formally verified code
+    *   Instills immediate confidence
+    *   High contrast for visibility
+    *   Color-blind friendly
 
-3. **Real-time Responsiveness**
-   - Immediate feedback for local operations
-   - Clear progress indicators for background tasks
-   - Graceful handling of network delays
-   - Optimistic UI updates with rollback capability
+*   **Blue (#3498DB):**
+    *   Indicates high statistical confidence
+    *   Professional, trustworthy appearance
+    *   Distinct from verification green
+    *   Maintains readability on dark/light themes
 
-4. **Transparent Operation**
-   - Clear status of backend operations
-   - Explicit distinction between local and server state
-   - Visibility into confidence score sources
-   - Error states with actionable recovery paths
+*   **Yellow (#F1C40F):**
+    *   Signals medium confidence
+    *   Cautionary but not alarming
+    *   Clear visibility without distraction
+    *   Sufficient contrast with background
 
-## 2. Phase-Aligned Interaction Patterns
+*   **Orange (#E67E22):**
+    *   Shows low confidence
+    *   Attracts attention without urgency
+    *   Clearly distinguishable from red
+    *   Indicates need for review
 
-### 2.1. Phase 1 (MVP) - Basic Confidence Indicators
+*   **Red (#E74C3C):**
+    *   Highlights verification failures
+    *   Commands immediate attention
+    *   Clear urgency signaling
+    *   High contrast for visibility
 
-#### Visual Indicators
+### 1.2. Icon Integration
 
-```
-function calculateTotal() {          │ 📊 85% │
-  let total = 0;                    │       │
-  // Basic hover panel:             │       │
-  // "Based on calibrated model     │       │
-  //  confidence"                   │       │
-}                                   └───────┘
-```
+Icons are positioned in the editor gutter for consistent visibility:
 
-#### Core Features
-- Color-coded confidence indicators
-- Simple hover-over explanation
-- Basic warning thresholds
-- Minimal configuration options
+*   **Placement:**
+    *   Aligned with line numbers
+    *   Consistent vertical positioning
+    *   Clear association with code blocks
+    *   Non-intrusive size (16x16px)
 
-#### Configuration (MVP)
-```
-Warning Thresholds
-├── Show warnings below [ 60% ]
-└── Highlight risks below [ 40% ]
-```
+*   **Animation:**
+    *   Subtle fade-in when scores update
+    *   No continuous animation to avoid distraction
+    *   200ms transition duration
+    *   Smooth color changes
 
-### 2.2. Phase 2 - Enhanced Confidence & Basic Assistance
+### 1.3. Visual Hierarchy
 
-#### Enhanced Indicators
+*   **Primary Indicators:**
+    *   Color bar in gutter (3px width)
+    *   Icon showing confidence type
+    *   High contrast for immediate recognition
 
-```
-function validateInput(data) {       │ 📊 92% │
-  // Verification Assistant         │ ✨     │
-  // suggests:                     │       │
-  // "Add null check for 'data'"   │       │
-  if (!data) throw new Error();     │ [Apply]│
-}                                   └───────┘
-```
+*   **Secondary Information:**
+    *   Numerical score (on hover)
+    *   Confidence type label
+    *   Explanation text
 
-#### Verification Panel
-```
-Verification Assistant
-├── Confidence: 92% (Ensemble Model)
-├── Similar Verified Cases: 5
-├── Suggested Properties:
-│   └── "data !== null"
-│       [Accept] [Modify] [Reject]
-└── Feedback: 👍 👎
-```
+## 2. Hover-Over Interface
 
-#### Enhanced Configuration
-```
-Verification Settings
-├── Confidence Thresholds
-│   ├── Auto-verify above [ 95% ]
-│   └── Warn below      [ 60% ]
-├── Assistance
-│   ├── Suggestion frequency [Medium▼]
-│   └── Detail level        [Basic▼]
-└── Notifications  [✓]
-```
-
-### 2.3. Phase 3 - Advanced Integration
-
-#### Workflow Integration
+### 2.1. Panel Layout
 
 ```
-Pull Request #123
-├── Overall Confidence: 89%
-├── Verified Components: 12/15
-├── Suggestions Applied: 8
-└── Team Reviews: 2 approved
+┌────────────────────────────────────┐
+│ Confidence Score: 95%              │
+│ Type: Statistical Guarantee        │
+├────────────────────────────────────┤
+│ Based on calibrated probability    │
+│ distribution of generation model   │
+├────────────────────────────────────┤
+│ [View Details] [Verify]           │
+└────────────────────────────────────┘
 ```
 
-#### Team Configuration
+*   **Content Organization:**
+    *   Key information at top
+    *   Clear visual hierarchy
+    *   Action buttons at bottom
+    *   Consistent padding (12px)
 
-```
-Team Verification Policy
-├── Required Reviews
-│   ├── Confidence < 80%     [Required]
-│   ├── Impact Score > 0.7   [Required]
-│   └── New Patterns        [Optional]
-├── Automation Rules
-│   ├── Auto-apply verified patterns
-│   └── Share verified solutions
-└── CI/CD Integration
-    └── Block merge if confidence < 70%
-```
+*   **Typography:**
+    *   Clear, readable font (system UI)
+    *   Adequate text size (14px base)
+    *   Important numbers in bold
+    *   Proper line height (1.4)
 
-## 3. Progressive UI Elements
+### 2.2. Progressive Disclosure
 
-### 3.1. Phase 1 - Essential UI
+*   **Level 1 (Immediate):**
+    *   Confidence score
+    *   Confidence type
+    *   Basic explanation
 
-- **Status Bar**: Basic confidence score
-- **Editor Gutter**: Color-coded indicators
-- **Hover Panel**: Simple explanation
-- **Settings**: Basic thresholds
+*   **Level 2 (View Details):**
+    *   Detailed rationale
+    *   Contributing factors
+    *   Historical context
+    *   Similar examples
 
-### 3.2. Phase 2 - Enhanced UI
+*   **Level 3 (Technical Details):**
+    *   Model specifics
+    *   Verification proofs
+    *   Raw metadata
 
-- **Verification Panel**: Suggestions and properties
-- **Detail View**: Confidence sources and rationale
-- **Feedback Mechanisms**: Quick reactions
-- **Enhanced Settings**: Assistance preferences
+## 3. Real-Time Updates
 
-### 3.3. Phase 3 - Advanced UI
+### 3.1. Update Visualization
 
-- **Team Dashboard**: Shared verification status
-- **CI/CD Integration**: Pipeline visibility
-- **Knowledge Base**: Shared patterns and solutions
-- **Advanced Configuration**: Team policies
+*   **Score Changes:**
+    *   Smooth color transitions (300ms)
+    *   Subtle icon update animation
+    *   Non-disruptive feedback
+    *   Clear visual difference
 
-## 4. Adoption Journey
+*   **Status Indicators:**
+    *   Loading state (subtle pulse)
+    *   Update complete (brief flash)
+    *   Error state (warning icon)
+    *   Offline mode (greyed out)
 
-### 4.1. Phase 1 - Building Trust
+### 3.2. Notification System
 
-- Start with conservative confidence thresholds
-- Provide clear explanations of confidence sources
-- Focus on non-intrusive indicators
-- Allow easy access to manual verification
+*   **Confidence Changes:**
+    *   Silent updates for minor changes
+    *   Subtle notification for significant drops
+    *   Clear alert for critical issues
+    *   Customizable thresholds
 
-### 4.2. Phase 2 - Expanding Utility
+*   **Connection Status:**
+    *   Quiet indication of normal operation
+    *   Clear feedback for connection issues
+    *   Automatic reconnection attempts
+    *   Manual refresh option
 
-- Introduce AI assistance gradually
-- Keep suggestions optional and easy to dismiss
-- Build trust through feedback loop
-- Maintain developer control
+## 4. Error Handling
 
-### 4.3. Phase 3 - Workflow Integration
+### 4.1. Visual Feedback
 
-- Integrate with existing tools and processes
-- Support team collaboration patterns
-- Enable customization of automation rules
-- Provide comprehensive documentation
+*   **Connection Issues:**
+    *   Subtle offline indicator
+    *   Retry animation during reconnection
+    *   Clear error state
+    *   Action suggestions
 
-## 5. Error Handling & Recovery
+*   **Update Failures:**
+    *   Maintain last known state
+    *   Show update attempt status
+    *   Clear error indication
+    *   Recovery options
 
-### 5.1. Progressive Error States
+### 4.2. User Recovery Flow
 
-1. **Phase 1 - Basic Handling**
-   - Clear indication of unavailable scores
-   - Simple retry mechanisms
-   - Offline mode with cached data
+1.  **Initial Error:**
+    *   Non-intrusive notification
+    *   Clear status indication
+    *   Maintain usability
+    *   Show help options
 
-2. **Phase 2 - Enhanced Recovery**
-   - Detailed error explanations
-   - Alternative suggestion sources
-   - Partial feature degradation
+2.  **Automatic Recovery:**
+    *   Background retry attempts
+    *   Progress indication
+    *   Success confirmation
+    *   Resume normal operation
 
-3. **Phase 3 - Advanced Resolution**
-   - Team-wide status updates
-   - Automated recovery procedures
-   - Historical data access
+3.  **Manual Intervention:**
+    *   Clear action options
+    *   Simple retry mechanism
+    *   Refresh capability
+    *   Support access
 
-## 6. Performance Considerations
+## 5. Accessibility Considerations
 
-### 6.1. Phase-Appropriate Loading
+### 5.1. Color Independence
 
-1. **Phase 1**
-   - Instant indicator updates
-   - Background confidence calculation
-   - Minimal network requests
+*   **Alternative Indicators:**
+    *   Icons for confidence levels
+    *   Patterns for color coding
+    *   Text labels for clarity
+    *   Numerical indicators
 
-2. **Phase 2**
-   - Progressive loading of suggestions
-   - Cached common patterns
-   - Optimistic UI updates
+*   **High Contrast Support:**
+    *   Adequate contrast ratios
+    *   Clear boundaries
+    *   Distinctive patterns
+    *   Text alternatives
 
-3. **Phase 3**
-   - Predictive preloading
-   - Distributed computation
-   - Team-wide caching
+### 5.2. Keyboard Navigation
 
-## 7. Success Metrics
+*   **Focus Management:**
+    *   Clear focus indicators
+    *   Logical tab order
+    *   Keyboard shortcuts
+    *   Focus trap in modals
 
-### 7.1. Phase 1 Metrics
-- Basic indicator visibility
-- Hover panel usage
-- Warning threshold effectiveness
-- Initial user trust level
+*   **Screen Reader Support:**
+    *   Meaningful labels
+    *   Status announcements
+    *   Clear hierarchy
+    *   Action descriptions
 
-### 7.2. Phase 2 Metrics
-- Suggestion acceptance rate
-- Verification time savings
-- Feature discovery
-- User satisfaction
+## 6. Mental Model Support
 
-### 7.3. Phase 3 Metrics
-- Team collaboration effectiveness
-- CI/CD integration impact
-- Advanced feature adoption
-- Overall productivity gains
+### 6.1. Confidence Level Mapping
+
+*   **Conceptual Alignment:**
+    *   Clear progression of confidence levels
+    *   Intuitive color associations
+    *   Familiar iconography
+    *   Consistent terminology
+
+*   **Learning Support:**
+    *   Tool tips for new users
+    *   Progressive complexity
+    *   Context-sensitive help
+    *   Example explanations
+
+### 6.2. Action Framework
+
+*   **Clear Capabilities:**
+    *   Obvious primary actions
+    *   Discoverable advanced features
+    *   Consistent interaction patterns
+    *   Predictable outcomes
+
+*   **Feedback Loops:**
+    *   Immediate action confirmation
+    *   Clear state changes
+    *   Progress indication
+    *   Result communication
+
+## 7. Integration Points
+
+### 7.1. IDE Integration
+
+*   **Native Feel:**
+    *   Match IDE theme
+    *   Consistent positioning
+    *   Standard interactions
+    *   Familiar patterns
+
+*   **Extension Points:**
+    *   Command palette integration
+    *   Context menu items
+    *   Key binding support
+    *   Settings integration
+
+### 7.2. Workflow Integration
+
+*   **Development Process:**
+    *   Non-disruptive updates
+    *   Background processing
+    *   Async feedback
+    *   Staged verification
+
+*   **Team Collaboration:**
+    *   Shared confidence context
+    *   Consistent visualization
+    *   Collaborative verification
+    *   Status persistence

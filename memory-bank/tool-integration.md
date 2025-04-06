@@ -60,11 +60,11 @@ This document details the design and integration of the Phase 1 tooling componen
 ### 3.1. Visual Indicators
 
 *   **Color Coding:**
-    *   **Green:** Formally verified
-    *   **Blue:** High confidence (statistical guarantee)
-    *   **Yellow:** Medium confidence (calibrated estimate)
-    *   **Orange:** Low confidence (heuristic estimate)
-    *   **Red:** Verification failed or critical concerns
+    *   **Green (#2ECC71):** Formally verified
+    *   **Blue (#3498DB):** High confidence (statistical guarantee)
+    *   **Yellow (#F1C40F):** Medium confidence (calibrated estimate)
+    *   **Orange (#E67E22):** Low confidence (heuristic estimate)
+    *   **Red (#E74C3C):** Verification failed or critical concerns
 
 *   **Icons:**
     *   **✓ (checkmark):** Formally verified
@@ -73,6 +73,18 @@ This document details the design and integration of the Phase 1 tooling componen
     *   **💡 (lightbulb):** Heuristic estimate
     *   **⚠️ (warning):** Needs attention
 
+*   **Placement:**
+    *   Aligned with line numbers
+    *   Consistent vertical positioning
+    *   Clear association with code blocks
+    *   Non-intrusive size (16x16px)
+
+*   **Animation:**
+    *   Subtle fade-in when scores update
+    *   No continuous animation to avoid distraction
+    *   200ms transition duration
+    *   Smooth color changes
+
 ### 3.2. Hover-Over Details Panel
 
 *   **Content:**
@@ -80,6 +92,25 @@ This document details the design and integration of the Phase 1 tooling componen
     *   **Confidence Type:** Categorical level
     *   **Rationale:** Explanation of the confidence score
     *   **Actions:** Available actions (e.g., View Details, Verify)
+
+*   **Panel Layout:**
+    ```
+    ┌────────────────────────────────────┐
+    │ Confidence Score: 95%              │
+    │ Type: Statistical Guarantee        │
+    ├────────────────────────────────────┤
+    │ Based on calibrated probability    │
+    │ distribution of generation model   │
+    ├────────────────────────────────────┤
+    │ [View Details] [Verify]           │
+    └────────────────────────────────────┘
+    ```
+
+*   **Typography:**
+    *   Clear, readable font (system UI)
+    *   Adequate text size (14px base)
+    *   Important numbers in bold
+    *   Proper line height (1.4)
 
 ### 3.3. Interaction with Gateway
 
@@ -108,6 +139,74 @@ This document details the design and integration of the Phase 1 tooling componen
             // Update the editor with the new confidence score
         };
         ```
+
+### 3.4. Real-Time Updates
+
+*   **Score Changes:**
+    *   Smooth color transitions (300ms)
+    *   Subtle icon update animation
+    *   Non-disruptive feedback
+    *   Clear visual difference
+
+*   **Status Indicators:**
+    *   Loading state (subtle pulse)
+    *   Update complete (brief flash)
+    *   Error state (warning icon)
+    *   Offline mode (greyed out)
+
+### 3.5. Notification System
+
+*   **Confidence Changes:**
+    *   Silent updates for minor changes
+    *   Subtle notification for significant drops
+    *   Clear alert for critical issues
+    *   Customizable thresholds
+
+*   **Connection Status:**
+    *   Quiet indication of normal operation
+    *   Clear feedback for connection issues
+    *   Automatic reconnection attempts
+    *   Manual refresh option
+
+### 3.6. Error Handling
+
+*   **Connection Issues:**
+    *   Subtle offline indicator
+    *   Retry animation during reconnection
+    *   Clear error state
+    *   Action suggestions
+
+*   **Update Failures:**
+    *   Maintain last known state
+    *   Show update attempt status
+    *   Clear error indication
+    *   Recovery options
+
+### 3.7. Accessibility
+
+*   **Alternative Indicators:**
+    *   Icons for confidence levels
+    *   Patterns for color coding
+    *   Text labels for clarity
+    *   Numerical indicators
+
+*   **High Contrast Support:**
+    *   Adequate contrast ratios
+    *   Clear boundaries
+    *   Distinctive patterns
+    *   Text alternatives
+
+*   **Keyboard Navigation:**
+    *   Clear focus indicators
+    *   Logical tab order
+    *   Keyboard shortcuts
+    *   Focus trap in modals
+
+*   **Screen Reader Support:**
+    *   Meaningful labels
+    *   Status announcements
+    *   Clear hierarchy
+    *   Action descriptions
 
 ## 4. Data Flow
 
