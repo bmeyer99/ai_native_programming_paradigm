@@ -1,285 +1,224 @@
-# Interaction Model for AI-Native Programming Paradigm
+# Developer Experience Design for Confidence Scoring & Verification Assistance
 
-This document defines the interaction model for how developers will work with the AI-Native Representation Format (ANRF) through AI-mediated interfaces. The model addresses intent specification, explanation/visualization, modification/feedback, and control/oversight mechanisms.
+## 1. Experience Principles
 
-## Core Interaction Principles
+### 1.1. Core Principles
 
-1. **Multi-Modal Intent Expression**:
-   - Natural language descriptions
-   - Code examples and sketches
-   - Interactive refinement through dialogue
-   - Visual programming and direct manipulation
+1. **Progressive Enhancement**
+   - Start with essential confidence indicators (Phase 1)
+   - Add verification assistance features gradually (Phase 2)
+   - Build to full workflow integration (Phase 3)
+   - Maintain consistent interaction patterns across phases
 
-2. **Progressive Disclosure**:
-   - Layer-appropriate views (EL, SML, IML)
-   - Context-sensitive abstraction levels
-   - Just-in-time explanation of AI decisions
-   - Gradual exposure to advanced capabilities
+2. **Progressive Disclosure**
+   - Essential information visible by default
+   - Details available through progressive interaction
+   - Context-sensitive help and explanations
+   - Customizable detail levels based on user preference
 
-3. **Bidirectional Control**:
-   - Developer-initiated actions
-   - AI-initiated suggestions
-   - Collaborative decision-making
-   - Clear authority boundaries
+3. **Real-time Responsiveness**
+   - Immediate feedback for local operations
+   - Clear progress indicators for background tasks
+   - Graceful handling of network delays
+   - Optimistic UI updates with rollback capability
 
-4. **Continuous Learning**:
-   - Feedback collection during interaction
-   - Preference adaptation over time
-   - Knowledge capture from expert users
-   - Team convention learning
+4. **Transparent Operation**
+   - Clear status of backend operations
+   - Explicit distinction between local and server state
+   - Visibility into confidence score sources
+   - Error states with actionable recovery paths
 
-## Intent Specification Interface
+## 2. Phase-Aligned Interaction Patterns
 
-### Natural Language Input
-- Contextual command bar for intent expression
-- Auto-completion with semantic suggestions
-- Interactive disambiguation through clarifying questions
-- Preservation of intent rationale in IML
+### 2.1. Phase 1 (MVP) - Basic Confidence Indicators
 
-### Example-Based Input
-- Code snippet collection and annotation
-- Interactive example refinement
-- Pattern extraction and generalization
-- Counter-example specification
+#### Visual Indicators
 
-### Visual Programming
-- Direct manipulation of ANRF graph structures
-- Semantic component assembly
-- Constraint specification through visual rules
-- Real-time preview of generated code
-
-### Multi-Modal Integration
-- Seamless switching between input modes
-- Cross-modal intent verification
-- Unified history and undo/redo
-- Context preservation across modes
-
-## Explanation & Visualization Framework
-
-### Layered View Navigation
 ```
-┌─────────────────────────────┐
-│ Intent Metadata Layer (IML) │
-├─────────────────────────────┤
-│ Semantic Mapping Layer (SML)│
-├─────────────────────────────┤
-│ Execution Layer (EL)        │
-└─────────────────────────────┘
+function calculateTotal() {          │ 📊 85% │
+  let total = 0;                    │       │
+  // Basic hover panel:             │       │
+  // "Based on calibrated model     │       │
+  //  confidence"                   │       │
+}                                   └───────┘
 ```
 
-- Synchronized views across layers
-- Focus+context visualization
-- Semantic relationship highlighting
-- Cross-layer impact preview
+#### Core Features
+- Color-coded confidence indicators
+- Simple hover-over explanation
+- Basic warning thresholds
+- Minimal configuration options
 
-### Interactive Visualizations
-- Expandable/collapsible code sections
-- Dynamic diagram generation
-- Interactive execution visualization
-- Performance and resource visualization
-
-### Explanation Generation
-- Natural language summaries
-- Rationale for AI decisions
-- Alternative suggestion exploration
-- Semantic impact analysis
-
-### Customization Options
-- Preferred abstraction levels
-- Visual style preferences
-- Explanation detail level
-- View layout configuration
-
-## Modification & Feedback Workflow
-
-### Intent-Based Modification
-1. Developer expresses modification intent
-2. AI generates multiple alternatives
-3. Developer reviews and selects/refines
-4. AI applies changes with semantic preservation
-
-### Direct Manipulation
-- In-place code editing
-- Semantic refactoring gestures
-- Constraint modification handles
-- Real-time validation feedback
-
-### Feedback Collection
-- Explicit accept/reject actions
-- Implicit preference tracking
-- Performance impact feedback
-- Error reporting and resolution
-
-### Collaborative Refinement
-- Team-wide pattern learning
-- Best practice sharing
-- Convention enforcement
-- Knowledge base building
-
-## Control & Oversight Mechanisms
-
-### Authority Levels
+#### Configuration (MVP)
 ```
-Developer Control Level:
-┌─────────────────────────────────────────────┐
-│ Full Control <- -> Partial <- -> AI Guided  │
-└─────────────────────────────────────────────┘
+Warning Thresholds
+├── Show warnings below [ 60% ]
+└── Highlight risks below [ 40% ]
 ```
 
-- Explicit control level setting
-- Context-sensitive authority rules
-- Emergency override capabilities
-- Audit trail maintenance
+### 2.2. Phase 2 - Enhanced Confidence & Basic Assistance
 
-### Decision Review
-- AI decision explanation requests
-- Alternative exploration
-- Impact analysis tools
-- Rollback capabilities
+#### Enhanced Indicators
 
-### Safety Mechanisms
-- Semantic preservation validation
-- Performance impact warnings
-- Security constraint checking
-- Team convention enforcement
-
-### Monitoring & Analytics
-- Interaction pattern tracking
-- Success/failure analysis
-- Performance metrics
-- Learning effectiveness measures
-
-## Example Workflows
-
-### 1. New Feature Development
 ```
-1. Intent Expression:
-   - Natural language description
-   - Example snippets
-   - Constraint specification
-
-2. AI Generation:
-   - Multiple implementation options
-   - Trade-off analysis
-   - Impact preview
-
-3. Developer Review:
-   - Interactive exploration
-   - Refinement requests
-   - Selection/modification
-
-4. Integration:
-   - Semantic validation
-   - Performance verification
-   - Documentation generation
+function validateInput(data) {       │ 📊 92% │
+  // Verification Assistant         │ ✨     │
+  // suggests:                     │       │
+  // "Add null check for 'data'"   │       │
+  if (!data) throw new Error();     │ [Apply]│
+}                                   └───────┘
 ```
 
-### 2. Code Optimization
+#### Verification Panel
 ```
-1. Target Specification:
-   - Performance goals
-   - Constraint preservation
-   - Resource limits
-
-2. AI Analysis:
-   - Bottleneck identification
-   - Optimization opportunities
-   - Trade-off presentation
-
-3. Interactive Refinement:
-   - Option exploration
-   - Impact visualization
-   - Progressive application
-
-4. Verification:
-   - Semantic preservation
-   - Benchmark validation
-   - Documentation update
+Verification Assistant
+├── Confidence: 92% (Ensemble Model)
+├── Similar Verified Cases: 5
+├── Suggested Properties:
+│   └── "data !== null"
+│       [Accept] [Modify] [Reject]
+└── Feedback: 👍 👎
 ```
 
-### 3. Bug Resolution
+#### Enhanced Configuration
 ```
-1. Issue Description:
-   - Symptom specification
-   - Test cases
-   - Expected behavior
-
-2. AI Diagnosis:
-   - Root cause analysis
-   - Impact assessment
-   - Fix alternatives
-
-3. Solution Review:
-   - Fix visualization
-   - Side-effect analysis
-   - Interactive refinement
-
-4. Application:
-   - Staged deployment
-   - Regression testing
-   - Documentation updates
+Verification Settings
+├── Confidence Thresholds
+│   ├── Auto-verify above [ 95% ]
+│   └── Warn below      [ 60% ]
+├── Assistance
+│   ├── Suggestion frequency [Medium▼]
+│   └── Detail level        [Basic▼]
+└── Notifications  [✓]
 ```
 
-## Mental Model Development
+### 2.3. Phase 3 - Advanced Integration
 
-### Conceptual Framework
-- Code as intent + implementation
-- AI as intelligent collaborator
-- Layered representation understanding
-- Semantic preservation guarantees
+#### Workflow Integration
 
-### Learning Progression
-1. Basic intent expression
-2. Layer navigation and understanding
-3. Advanced modification techniques
-4. Optimization and debugging workflows
+```
+Pull Request #123
+├── Overall Confidence: 89%
+├── Verified Components: 12/15
+├── Suggestions Applied: 8
+└── Team Reviews: 2 approved
+```
 
-### Common Metaphors
-- "AI as pair programmer"
-- "Layers as maps at different scales"
-- "Intent as recipe, implementation as cooking"
-- "Semantic preservation as contract"
+#### Team Configuration
 
-## Transition Strategy
+```
+Team Verification Policy
+├── Required Reviews
+│   ├── Confidence < 80%     [Required]
+│   ├── Impact Score > 0.7   [Required]
+│   └── New Patterns        [Optional]
+├── Automation Rules
+│   ├── Auto-apply verified patterns
+│   └── Share verified solutions
+└── CI/CD Integration
+    └── Block merge if confidence < 70%
+```
 
-### Gradual Introduction
-1. Traditional code view with AI assistance
-2. Progressive exposure to ANRF layers
-3. Introduction of advanced capabilities
-4. Full AI-native workflow adoption
+## 3. Progressive UI Elements
 
-### Support Mechanisms
-- Interactive tutorials
-- Context-sensitive help
-- Best practice examples
-- Expert community support
+### 3.1. Phase 1 - Essential UI
 
-### Fallback Capabilities
-- Traditional code view always available
-- Manual override options
-- Hybrid workflows supported
-- Gradual feature adoption
+- **Status Bar**: Basic confidence score
+- **Editor Gutter**: Color-coded indicators
+- **Hover Panel**: Simple explanation
+- **Settings**: Basic thresholds
 
-## Success Metrics
+### 3.2. Phase 2 - Enhanced UI
 
-### Usability Metrics
-- Time to accomplish common tasks
-- Error rates and recovery time
-- Learning curve progression
-- User satisfaction scores
+- **Verification Panel**: Suggestions and properties
+- **Detail View**: Confidence sources and rationale
+- **Feedback Mechanisms**: Quick reactions
+- **Enhanced Settings**: Assistance preferences
 
-### Productivity Metrics
-- Development velocity
-- Code quality metrics
-- Bug resolution time
-- Documentation coverage
+### 3.3. Phase 3 - Advanced UI
 
-### Adoption Metrics
-- Feature usage rates
-- User progression levels
+- **Team Dashboard**: Shared verification status
+- **CI/CD Integration**: Pipeline visibility
+- **Knowledge Base**: Shared patterns and solutions
+- **Advanced Configuration**: Team policies
+
+## 4. Adoption Journey
+
+### 4.1. Phase 1 - Building Trust
+
+- Start with conservative confidence thresholds
+- Provide clear explanations of confidence sources
+- Focus on non-intrusive indicators
+- Allow easy access to manual verification
+
+### 4.2. Phase 2 - Expanding Utility
+
+- Introduce AI assistance gradually
+- Keep suggestions optional and easy to dismiss
+- Build trust through feedback loop
+- Maintain developer control
+
+### 4.3. Phase 3 - Workflow Integration
+
+- Integrate with existing tools and processes
+- Support team collaboration patterns
+- Enable customization of automation rules
+- Provide comprehensive documentation
+
+## 5. Error Handling & Recovery
+
+### 5.1. Progressive Error States
+
+1. **Phase 1 - Basic Handling**
+   - Clear indication of unavailable scores
+   - Simple retry mechanisms
+   - Offline mode with cached data
+
+2. **Phase 2 - Enhanced Recovery**
+   - Detailed error explanations
+   - Alternative suggestion sources
+   - Partial feature degradation
+
+3. **Phase 3 - Advanced Resolution**
+   - Team-wide status updates
+   - Automated recovery procedures
+   - Historical data access
+
+## 6. Performance Considerations
+
+### 6.1. Phase-Appropriate Loading
+
+1. **Phase 1**
+   - Instant indicator updates
+   - Background confidence calculation
+   - Minimal network requests
+
+2. **Phase 2**
+   - Progressive loading of suggestions
+   - Cached common patterns
+   - Optimistic UI updates
+
+3. **Phase 3**
+   - Predictive preloading
+   - Distributed computation
+   - Team-wide caching
+
+## 7. Success Metrics
+
+### 7.1. Phase 1 Metrics
+- Basic indicator visibility
+- Hover panel usage
+- Warning threshold effectiveness
+- Initial user trust level
+
+### 7.2. Phase 2 Metrics
+- Suggestion acceptance rate
+- Verification time savings
+- Feature discovery
+- User satisfaction
+
+### 7.3. Phase 3 Metrics
 - Team collaboration effectiveness
-- Knowledge base growth
-
-## Conclusion
-
-This interaction model provides a comprehensive framework for developers to effectively work with ANRF through AI-mediated interfaces. It balances the power of AI automation with developer control and understanding, while supporting a smooth transition from traditional development practices to the AI-native paradigm.
+- CI/CD integration impact
+- Advanced feature adoption
+- Overall productivity gains

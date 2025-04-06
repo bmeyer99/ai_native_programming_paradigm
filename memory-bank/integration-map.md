@@ -18,7 +18,7 @@
 **Status**: Design Phase
 - Category-theoretic model defined
 - Representation format in development
-- Architecture components identified
+- Architecture components identified and refined
 - Tool requirements specified
 
 ### 2. Human-AI Interface
@@ -46,18 +46,22 @@
 - Runtime Guards (Systems Architect)
 - AI Safety Checks (AI Integration Specialist)
 - Testing Framework (Tool Ecosystem Engineer)
+- **NEW: Verification Service** (Systems Architect)
 
 **Integration Requirements**:
 - Continuous verification
 - Multi-layer security
 - Audit capabilities
 - Semantic preservation testing
+- **NEW: Confidence scoring for AI outputs**
+- **NEW: Incremental and modular verification**
 
-**Status**: Requirements Defined
+**Status**: Architecture Defined
 - Verification framework proposed
 - Security architecture specified
 - Safety requirements identified
 - Testing framework designed
+- **NEW: Verification Service architecture defined**
 
 ### 4. Development Workflow
 **Components**:
@@ -71,12 +75,32 @@
 - Progressive adoption path
 - Integrated tooling
 - Collaborative development support
+- **NEW: Support for migration patterns (Wrapper, Strangler, AI-Assisted Translation)**
 
-**Status**: Initial Design
+**Status**: Design Phase
 - Interface framework defined
-- Adoption strategy in development
+- Adoption strategy completed
 - Tool requirements specified
-- System integration in progress
+- System integration refined for practical constraints
+
+### 5. Legacy Integration (NEW)
+**Components**:
+- Execution Environment (Systems Architect)
+- Migration Patterns (Implementation Strategist)
+- ANRF Core Service (Systems Architect)
+- Tool Support (Tool Ecosystem Engineer)
+
+**Integration Requirements**:
+- FFI/RPC interfaces for Wrapper pattern
+- Routing layer for Strangler Fig pattern
+- Partial ANRF representation for hybrid codebases
+- Legacy code analysis tools
+
+**Status**: Architecture Defined
+- Migration patterns defined
+- Execution Environment interfaces specified
+- ANRF Core Service APIs for partial representations defined
+- Tool requirements identified
 
 ## Component Interfaces
 
@@ -102,6 +126,7 @@
 - Algebraic optimization model (Theoretical Computer Scientist)
 - Performance visualization (Developer Experience Designer)
 - Optimization testing (Tool Ecosystem Engineer)
+- **NEW: Verification triggers** (Systems Architect)
 
 **Integration Requirements**:
 - Correctness preservation
@@ -109,6 +134,7 @@
 - Developer control
 - Performance metrics
 - Regression testing for optimizations
+- **NEW: Confidence scoring for optimizations**
 
 ### 3. Visualization Interface
 **Status**: Initial Design
@@ -140,6 +166,21 @@
 - Conflict resolution
 - Progressive adoption
 
+### 5. Verification Interface (NEW)
+**Status**: Architecture Defined
+**Key Components**:
+- Verification Service (Systems Architect)
+- AI Integration Service confidence scoring (Systems Architect)
+- Formal verification models (Theoretical Computer Scientist)
+- Verification tooling (Tool Ecosystem Engineer)
+
+**Integration Requirements**:
+- Modular verification
+- Incremental verification
+- AI-assisted verification
+- Verification result visualization
+- Integration with CI/CD pipelines
+
 ## Cross-Cutting Concerns
 
 ### Security Framework
@@ -150,6 +191,7 @@
 - Audit logging
 - Developer authority controls
 - Semantic preservation testing
+- **NEW: AI output validation**
 
 ### Performance Management
 **Implementation**: Multi-level
@@ -159,6 +201,8 @@
 - Resource management
 - Performance visualization
 - Optimization profiling
+- **NEW: Incremental ANRF processing**
+- **NEW: Tiered AI service levels**
 
 ### Developer Workflow
 **Implementation**: Progressive Enhancement
@@ -168,6 +212,7 @@
 - Collaborative features
 - Feedback mechanisms
 - Debugging and exploration tools
+- **NEW: Legacy code integration workflows**
 
 ### Verification System
 **Implementation**: Continuous Validation
@@ -177,6 +222,8 @@
 - Testing frameworks
 - Cross-space debugging
 - Semantic preservation testing
+- **NEW: Confidence-based verification triggers**
+- **NEW: Incremental verification**
 
 ## Integration Milestones
 
@@ -187,6 +234,8 @@
 - Interface design
 - Tool ecosystem requirements
 - Integration points identification
+- Implementation strategy
+- System architecture refinement
 
 ### Phase 2: Component Development
 **Planned**:
@@ -195,6 +244,7 @@
 - Interface implementation
 - Tool ecosystem implementation
 - Verification system implementation
+- Migration tooling development
 
 ### Phase 3: Integration
 **Future**:
@@ -203,8 +253,11 @@
 - Performance optimization
 - Security hardening
 - Developer experience refinement
+- Legacy code migration support
 
 ## Change Log
+- 2025-04-06 19:49: Updated with Systems Architect's refined architecture addressing practical constraints
+- 2025-04-06 19:45: Updated with Implementation Strategist's adoption and migration strategies
 - 2025-04-06 18:22: Updated with Tool Ecosystem Engineer's tool requirements
 - 2025-04-06 18:15: Updated with Developer Experience Designer's interface framework
 - 2025-04-06 18:09: Updated with AI Integration Specialist's architecture design

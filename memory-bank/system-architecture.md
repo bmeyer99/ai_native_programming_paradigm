@@ -1,8 +1,8 @@
-# System Architecture for AI-Native Programming Paradigm
+# System Architecture for AI-Native Programming Paradigm (v2 - Incorporating Practical Constraints)
 
 ## Overview
 
-This document outlines the technical architecture for the AI-Native Programming Paradigm, focusing on the components required to support the generation, storage, manipulation, execution, and human interaction with the AI-Native Representation Format (ANRF). The architecture prioritizes modularity, performance, scalability, security, and extensibility.
+This document outlines the technical architecture for the AI-Native Programming Paradigm, focusing on the components required to support the generation, storage, manipulation, execution, and human interaction with the AI-Native Representation Format (ANRF). This version incorporates refinements based on practical constraints identified during implementation planning. The architecture prioritizes modularity, performance, scalability, security, extensibility, **verifiability**, and **support for gradual adoption**.
 
 ## Core Architectural Principles
 
@@ -11,158 +11,160 @@ This document outlines the technical architecture for the AI-Native Programming 
 3.  **Asynchronous Communication**: Utilize message queues or event buses for inter-service communication where appropriate to enhance scalability and resilience.
 4.  **State Management**: Centralize or effectively distribute state management for consistency.
 5.  **Extensibility**: Design for easy integration of new AI models, representation features, and interaction modalities.
-6.  **Performance**: Optimize critical paths for real-time interaction and efficient batch processing.
-7.  **Security**: Integrate security considerations at all levels of the architecture.
+6.  **Performance**: Optimize critical paths for real-time interaction and efficient batch processing, mitigating ANRF overhead.
+7.  **Security**: Integrate security considerations at all levels, including validation of AI outputs.
+8.  **Verifiability**: Architect components to support modular and incremental verification processes.
+9.  **Interoperability**: Design explicit interfaces for integration with legacy systems and existing toolchains.
 
-## High-Level Architecture Diagram
+## High-Level Architecture Diagram (Refined)
 
 ```
-+-----------------------+      +--------------------------+      +------------------------+
-|   Interaction Gateway |----->|   AI Integration Service |----->|   ANRF Core Service    |
-| (Input Processing)    |<-----|   (AI Models Interface)  |<-----|   (Representation Mgr) |
-+----------^------------+      +-------------^------------+      +-----------^------------+
-           |                                |                       |
-           |                                |                       |
-+----------v------------+      +-------------v------------+      +-----------v------------+
-| View Rendering Service|<-----| State Management Service |----->| Data Persistence Layer |
-| (UI Generation)       |----->| (Context, History)       |<-----| (ANRF Storage)         |
-+-----------------------+      +--------------------------+      +------------------------+
++-----------------------+      +--------------------------+      +------------------------+      +-------------------------+
+|   Interaction Gateway |----->|   AI Integration Service |----->|   ANRF Core Service    |----->| Verification Service    |
+| (Input Processing,    |<-----|   (AI Models Interface,  |<-----|   (Representation Mgr, |<-----| (Semantic Checks,       |
+|  Client API)          |      |    Confidence Scoring)   |      |    Consistency Checks) |      |  Equivalence/Refinement)|
++----------^------------+      +-------------^------------+      +-----------^------------+      +------------^------------+
+           |                                |                       |                        |
+           |                                |                       |                        |
++----------v------------+      +-------------v------------+      +-----------v------------+      +------------v------------+
+| View Rendering Service|<-----| State Management Service |----->| Data Persistence Layer |<-----| Execution Environment   |
+| (UI Generation,       |----->| (Context, History,       |<-----| (ANRF Storage,         |----->| (Runtime, Monitoring,   |
+|  Abstraction Levels)  |      |  User Prefs, Locks)      |      |  Versioning, Indexing)|      |  Legacy Integration)    |
++-----------------------+      +--------------------------+      +------------------------+      +-------------------------+
 ```
+*(Added Verification Service and refined Execution Environment)*
 
-## Key Components
+## Key Components (Refinements based on Constraints)
 
 ### 1. Interaction Gateway
+*(No major changes, continues to handle input/output)*
+*   **Responsibilities**: Receive/parse multi-modal input, normalize, route requests, format responses.
+*   **Interfaces**: APIs for clients, internal APIs to backend.
+*   **Technology Considerations**: API Gateway, message queues, protocol translation.
 
+### 2. AI Integration Service (Refined)
 *   **Responsibilities**:
-    *   Receive and parse input from various human interfaces (IDE plugins, web UIs, voice interfaces, etc.).
-    *   Handle multiple input modalities (natural language, code snippets, visual commands, examples).
-    *   Normalize diverse inputs into a canonical format for downstream processing.
-    *   Route requests to appropriate backend services (AI Integration, ANRF Core, View Rendering).
-    *   Format responses from backend services for presentation in the user interface.
-*   **Interfaces**: APIs for different client types (IDE extensions, web frontends), internal APIs to backend services.
-*   **Technology Considerations**: API Gateway patterns, message queues for decoupling, protocol translation.
+    *   Abstract AI models (LLMs, GNNs, RL, etc.).
+    *   Translate requests/interpret outputs for AI models.
+    *   Manage AI model lifecycle, deployment, scaling (consider tiered service levels for cost management).
+    *   Orchestrate AI tasks (Gen, Opt, Explain, Verify Assist).
+    *   **NEW**: Generate **confidence scores** for AI outputs (generation, optimization steps).
+    *   **NEW**: Trigger **Verification Service** checks on AI-generated/modified ANRF sections based on confidence scores or policy.
+    *   Interface with ANRF Core Service for ANRF access/modification.
+*   **Interfaces**: Internal APIs, AI model serving platforms, ANRF Core Service API, **NEW: Verification Service API**.
+*   **Technology Considerations**: Microservices, model serving frameworks, workflow engines, **NEW: Interfaces for confidence estimation models**.
 
-### 2. AI Integration Service
-
+### 3. ANRF Core Service (Refined)
 *   **Responsibilities**:
-    *   Act as an abstraction layer over various AI models (LLMs, GNNs, RL agents, etc.).
-    *   Translate requests from other services into prompts or inputs suitable for specific AI models.
-    *   Manage AI model lifecycles, deployment, and scaling.
-    *   Orchestrate AI tasks like intent-to-ANRF translation, optimization suggestion, explanation generation, and verification assistance.
-    *   Interpret AI model outputs and translate them into structured responses or ANRF modifications.
-    *   Interface with the ANRF Core Service to access and modify representations based on AI operations.
-*   **Interfaces**: Internal APIs for receiving tasks, interfaces to various AI model serving platforms, API to ANRF Core Service.
-*   **Technology Considerations**: Microservices for different AI capabilities, model serving frameworks (e.g., TensorFlow Serving, Triton), workflow orchestration engines.
+    *   Manage ANRF instance lifecycle.
+    *   Provide APIs for accessing/manipulating ANRF layers (EL, SML, IML).
+    *   Enforce structural integrity and consistency.
+    *   **NEW**: Support **incremental processing and validation** to improve performance and enable faster feedback loops.
+    *   **NEW**: Implement **efficient data structures** and access patterns optimized for layered ANRF queries and updates.
+    *   Execute non-AI transformations.
+    *   Manage cross-layer references.
+    *   Interface with Data Persistence Layer.
+    *   Provide semantic validation hooks for Verification Service.
+    *   **NEW**: Provide APIs to support **partial ANRF representations** and linking metadata for legacy code integration (Transition Patterns 1, 2, 3).
+*   **Interfaces**: Internal APIs, Data Persistence Layer interface, **NEW: Hooks for Verification Service**.
+*   **Technology Considerations**: Graph databases, specialized data structures, transaction management, **NEW: Incremental computation frameworks**.
 
-### 3. ANRF Core Service
-
+### 4. Verification Service (NEW)
 *   **Responsibilities**:
-    *   Manage the lifecycle of ANRF instances (creation, retrieval, update, deletion).
-    *   Provide APIs for accessing and manipulating all three layers (EL, SML, IML) of ANRF.
-    *   Enforce structural integrity and consistency of the ANRF representation.
-    *   Execute non-AI transformations and optimizations on ANRF.
-    *   Manage cross-layer references and ensure their consistency during modifications.
-    *   Interface with the Data Persistence Layer for loading and saving ANRF instances.
-    *   Provide semantic validation capabilities based on the formal semantics.
-*   **Interfaces**: Internal APIs for ANRF manipulation and querying, interface to Data Persistence Layer.
-*   **Technology Considerations**: Graph databases or specialized data structures for ANRF, transaction management, validation engines based on formal semantics.
+    *   Perform semantic checks on ANRF instances or fragments based on formal semantics (`formal-models.md`).
+    *   Execute equivalence checking between ANRF instances (e.g., pre- and post-optimization) (`Opt(r) ≈ r`).
+    *   Perform refinement checking between ANRF and intent specifications (where feasible) (`r ⊑ i`).
+    *   Support **modular verification** of components.
+    *   Support **incremental verification** triggered by changes in ANRF Core or AI Integration Service.
+    *   Leverage AI assistance (via AI Integration Service) for complex proofs or property discovery.
+    *   Provide verification results and evidence.
+*   **Interfaces**: Internal API for verification requests (from AI Integration, ANRF Core, CI/CD), interface to ANRF Core Service, interface to AI Integration Service.
+*   **Technology Considerations**: Formal methods tools (SMT solvers, theorem provers, model checkers), abstract interpretation engines, property-based testing frameworks, integration with AI for proof assistance.
 
-### 4. View Rendering Service
+### 5. View Rendering Service
+*(No major changes, focuses on generating human views)*
+*   **Responsibilities**: Generate views from ANRF, implement translation mechanisms, support abstraction levels, incorporate context.
+*   **Interfaces**: Internal API, ANRF Core Service API, State Management Service API.
+*   **Technology Considerations**: Template engines, graph visualization, code formatters.
 
+### 6. State Management Service
+*(No major changes, manages session state)*
+*   **Responsibilities**: Maintain interaction state, user profiles, preferences, collaboration state, concurrency control.
+*   **Interfaces**: Internal APIs.
+*   **Technology Considerations**: Distributed caching, session databases, event sourcing.
+
+### 7. Data Persistence Layer (Refined)
 *   **Responsibilities**:
-    *   Generate different human-readable views (code, diagrams, documentation) from ANRF based on requests from the Interaction Gateway.
-    *   Implement the translation mechanisms defined in `translation-mechanisms.md`.
-    *   Support different abstraction levels (Implementation, Algorithm, Specification, Intent).
-    *   Incorporate user context and preferences (from State Management Service) into view generation.
-    *   Optimize view generation for performance and responsiveness.
-    *   Provide data needed for interactive visualizations (e.g., graph layouts, highlighted elements).
-*   **Interfaces**: Internal API for view generation requests, interface to ANRF Core Service, interface to State Management Service.
-*   **Technology Considerations**: Template engines, graph visualization libraries, code formatting libraries, potentially dedicated microservices per view type.
+    *   Store and retrieve ANRF instances.
+    *   Handle ANRF serialization/deserialization efficiently.
+    *   Manage ANRF versioning.
+    *   Provide optimized indexing for ANRF queries (including metadata).
+    *   Ensure data integrity, backup, recovery.
+    *   **NEW**: Support storage of **partial ANRF representations** and links to external legacy code artifacts.
+*   **Interfaces**: Internal data access APIs.
+*   **Technology Considerations**: Combination databases (GraphDB, DocDB, Blob), indexing strategies, **NEW: Schema design for partial/hybrid representations**.
 
-### 5. State Management Service
-
+### 8. Execution Environment (Refined)
 *   **Responsibilities**:
-    *   Maintain the state of user interactions, including session context, history (for undo/redo), and focus.
-    *   Store and manage user profiles, preferences, and learned adaptations.
-    *   Track the state of ongoing AI tasks and collaborative sessions.
-    *   Provide consistent state information to other services (e.g., context for AI, preferences for View Rendering).
-    *   Manage locking or concurrency control for collaborative editing scenarios.
-*   **Interfaces**: Internal APIs for state querying and updates.
-*   **Technology Considerations**: Distributed caching (e.g., Redis), databases optimized for session management, event sourcing patterns.
+    *   Execute code represented in ANRF EL.
+    *   Provide runtime services and libraries.
+    *   Interface with underlying OS/hardware.
+    *   Implement security boundaries.
+    *   Provide performance monitoring and diagnostic hooks.
+    *   **NEW**: Implement mechanisms for **interoperability with legacy code** (e.g., FFI, shared memory, RPC stubs) to support Transition Patterns 1 & 2.
+    *   **NEW**: Potentially host routing logic for Strangler Fig pattern.
+*   **Interfaces**: Interface to load ANRF EL from ANRF Core/Persistence, OS interfaces, **NEW: Legacy code interfaces (FFI etc.)**.
+*   **Technology Considerations**: JIT compilation, interpreters, WebAssembly runtimes, secure execution environments, FFI libraries.
 
-### 6. Data Persistence Layer
+## Data Flow Examples (Incorporating Verification)
 
-*   **Responsibilities**:
-    *   Store and retrieve ANRF instances efficiently and reliably.
-    *   Handle serialization and deserialization of the hybrid ANRF format (binary EL, structured SML, rich text IML).
-    *   Manage versioning of ANRF instances.
-    *   Provide indexing capabilities for efficient querying of ANRF components and metadata.
-    *   Ensure data integrity, backup, and recovery.
-*   **Interfaces**: Internal data access APIs used by ANRF Core Service and potentially State Management Service.
-*   **Technology Considerations**: Combination of databases suited for different data types (e.g., graph database for EL/SML relationships, document database for IML, blob storage for binary EL), database indexing strategies.
+### Intent-to-ANRF Flow (Refined)
+1. Interaction Gateway: Receives intent.
+2. Interaction Gateway -> AI Integration Service: Routes intent.
+3. AI Integration Service: Uses AI to generate draft ANRF, **assigns confidence score**.
+4. AI Integration Service -> ANRF Core Service: Sends draft ANRF.
+5. ANRF Core Service: Performs initial validation.
+6. **(Conditional based on confidence/policy)** ANRF Core Service -> Verification Service: Requests semantic checks on draft ANRF.
+7. **Verification Service**: Performs checks (potentially using AI assist via AI Integration Service), returns results.
+8. ANRF Core Service: Integrates verification results (e.g., annotations).
+9. ANRF Core Service -> Data Persistence Layer: Stores verified/annotated ANRF.
+10. ANRF Core Service -> AI Integration Service: Confirms storage + verification status.
+11. AI Integration Service -> Interaction Gateway: Sends confirmation/summary.
+12. Interaction Gateway -> UI: Displays confirmation/view request.
 
-## Data Flow Examples
+## Integration Approach (Refined)
+*   Internal: APIs (REST, gRPC), asynchronous messaging.
+*   External: Interaction Gateway API. ANRF Core import/export APIs. **NEW: Execution Environment interfaces for legacy code (FFI, etc.)**.
+*   AI Models: Abstracted by AI Integration Service.
+*   **NEW: CI/CD Integration**: Hooks in ANRF Core Service and Verification Service for automated checks during build/deployment pipelines.
 
-### Intent-to-ANRF Flow
-
-1.  **Interaction Gateway**: Receives intent (e.g., natural language) from UI.
-2.  **Interaction Gateway -> AI Integration Service**: Routes intent for processing.
-3.  **AI Integration Service**: Uses AI models (LLMs, semantic parsers) to generate initial ANRF structure (IML, SML, draft EL).
-4.  **AI Integration Service -> ANRF Core Service**: Sends generated ANRF for validation and storage preparation.
-5.  **ANRF Core Service**: Validates structure, ensures consistency, assigns IDs.
-6.  **ANRF Core Service -> Data Persistence Layer**: Stores the new ANRF instance.
-7.  **ANRF Core Service -> AI Integration Service**: Confirms storage.
-8.  **AI Integration Service -> Interaction Gateway**: Sends confirmation/summary.
-9.  **Interaction Gateway -> UI**: Displays confirmation or initial view request.
-
-### ANRF-to-Human View Flow
-
-1.  **Interaction Gateway**: Receives request for a specific view/abstraction level from UI.
-2.  **Interaction Gateway -> State Management Service**: Retrieves user context/preferences.
-3.  **Interaction Gateway -> View Rendering Service**: Requests view generation with ANRF ID and context.
-4.  **View Rendering Service -> ANRF Core Service**: Requests relevant ANRF data.
-5.  **ANRF Core Service -> Data Persistence Layer**: Loads ANRF data.
-6.  **ANRF Core Service -> View Rendering Service**: Returns ANRF data.
-7.  **View Rendering Service**: Generates the requested view using translation mechanisms and context.
-8.  **View Rendering Service -> Interaction Gateway**: Returns the generated view data.
-9.  **Interaction Gateway -> UI**: Sends view data for display.
-
-## Integration Approach
-
-*   **Internal**: Services communicate via well-defined APIs (e.g., REST, gRPC) or asynchronous messaging (e.g., Kafka, RabbitMQ).
-*   **External**: The Interaction Gateway provides the primary API for external clients (IDEs, etc.). The ANRF Core Service may provide import/export APIs for interoperability with other formats/tools.
-*   **AI Models**: The AI Integration Service isolates the rest of the system from specific AI model implementations.
-
-## Performance Considerations
-
-*   **Real-time Interaction**: Caching in State Management and View Rendering services. Incremental updates and processing in ANRF Core Service. Efficient ANRF serialization/deserialization.
-*   **AI Operations**: Asynchronous processing for long-running AI tasks. Scalable deployment of AI models.
-*   **Data Access**: Optimized indexing in the Data Persistence Layer. Efficient querying APIs in ANRF Core Service.
+## Performance Considerations (Refined)
+*   Real-time Interaction: Caching, **incremental ANRF processing/validation**, efficient serialization.
+*   AI Operations: Asynchronous processing, scalable AI deployment, **tiered AI services**.
+*   Data Access: Optimized indexing, efficient ANRF querying.
+*   **Verification**: **Incremental and parallel verification**, configurable verification levels based on criticality/phase.
 
 ## Scalability Design
+*(No major changes, relies on component scaling, partitioning, async processing)*
 
-*   **Component Scaling**: Individual services (AI Integration, View Rendering, ANRF Core) can be scaled independently based on load.
-*   **Data Partitioning**: ANRF data can potentially be partitioned or sharded in the Data Persistence Layer for very large codebases.
-*   **Asynchronous Processing**: Use of message queues allows decoupling and load balancing.
+## Security Framework (Refined)
+*   Authentication/Authorization: At Gateway and per-service.
+*   Access Control: Granular control in ANRF Core Service.
+*   Data Integrity: In Persistence Layer and ANRF Core Service.
+*   AI Security: In AI Integration Service (input/output validation, monitoring). **NEW: Verification Service acts as a check on potentially unsafe AI outputs.**
 
-## Security Framework
-
-*   **Authentication/Authorization**: Handled at the Interaction Gateway and potentially enforced per-service.
-*   **Access Control**: Granular access control applied within the ANRF Core Service based on metadata and user roles/permissions managed by the State Management Service.
-*   **Data Integrity**: Mechanisms within the Data Persistence Layer and ANRF Core Service (e.g., checksums, versioning).
-*   **AI Security**: Handled within the AI Integration Service (input sanitization, output validation, monitoring for malicious use). See `ai-security-framework.md` for details.
-
-## Technical Tradeoffs
-
-*   **Complexity vs. Modularity**: Service-oriented architecture increases operational complexity but improves modularity and scalability.
-*   **Consistency vs. Performance**: Strong consistency in state management might impact real-time performance; eventual consistency might be acceptable for some features.
-*   **Flexibility vs. Standardization**: Balancing standardized internal APIs with the need to accommodate diverse AI models and interaction modalities.
+## Technical Tradeoffs (Refined)
+*   Complexity vs. Modularity: Service architecture maintained.
+*   Consistency vs. Performance: Still relevant, especially with distributed state and verification.
+*   Flexibility vs. Standardization: Maintained.
+*   **NEW: Verification Rigor vs. Performance**: Trade-off between depth/completeness of verification and speed of development cycle. Addressed via incremental/configurable verification.
+*   **NEW: AI Automation vs. Control/Reliability**: Addressed via confidence scores, verification steps, and human-in-the-loop workflows.
 
 ## Next Steps
-
-*   Refine component interfaces and data models.
-*   Select specific technologies for each component.
-*   Develop detailed sequence diagrams for key workflows.
-*   Design performance benchmarking strategy.
-*   Collaborate with AI Integration Specialist on AI service interfaces.
-*   Collaborate with Tool Ecosystem Engineer on external integration points.
+*   Refine component interfaces, especially for Verification Service and legacy integration.
+*   Select specific technologies considering performance and verification needs.
+*   Develop detailed sequence diagrams for migration patterns.
+*   Design performance benchmarking strategy focusing on ANRF overhead and verification impact.
+*   Collaborate with AI Integration Specialist on confidence scoring and verification assistance interfaces.
+*   Collaborate with Tool Ecosystem Engineer on CI/CD integration and legacy interface tooling.
+*   **Handoff refined architecture to relevant specialists (Language Designer, AI Integration, Tool Ecosystem Engineer, Paradigm Orchestrator).**

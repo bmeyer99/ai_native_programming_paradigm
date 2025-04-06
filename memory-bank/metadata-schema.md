@@ -51,6 +51,7 @@ Provenance metadata tracks the history and origin of the code:
 - **Transformation History**: Record of applied transformations
 - **Authorship Information**: Who created or modified the code
 - **Version Information**: Version and timestamp data
+- **Verification Metadata**: Confidence scores and verification status information
 
 ## Schema Structure
 
@@ -81,7 +82,14 @@ Metadata
     ├── SourceMappings
     ├── TransformationHistory
     ├── Authorship
-    └── VersionInfo
+    ├── VersionInfo
+    └── VerificationMetadata
+        ├── ConfidenceScores
+        │   ├── GenerationScores
+        │   ├── OptimizationScores
+        │   └── ExplanationScores
+        ├── VerificationStatus
+        └── VerificationHistory
 ```
 
 ## Metadata Representation
@@ -130,6 +138,54 @@ Metadata is represented using a combination of:
       {"type": "constant_folding", "timestamp": "2025-04-01T10:30:01Z"}
     ],
     "author": "AI:GPT-5",
+    "version": "1.0.0"
+  }
+}
+```
+
+### Example Confidence Score Metadata Record
+
+```json
+{
+  "id": "conf:func:calculate_total:gen:20250406T195200Z",
+  "target": "anrf:semantic/function/calculate_total/func123",
+  "timestamp": "2025-04-06T19:52:00Z",
+  "score": {
+    "numerical": 0.95,
+    "categorical": "High",
+    "type": "Conformal Coverage",
+    "uncertaintyType": "Epistemic",
+    "rationale": "Based on 95% confidence interval from conformal prediction"
+  },
+  "details": {
+    "technique": "ConformalPrediction",
+    "parameters": {
+      "calibrationSize": 1000,
+      "alpha": 0.05
+    },
+    "contributingFactors": [
+      {
+        "factor": "SimilarTrainingExamples",
+        "weight": 0.7,
+        "description": "High similarity to 42 training examples"
+      },
+      {
+        "factor": "ModelConsensus",
+        "weight": 0.3,
+        "description": "8/10 models agree on this output"
+      }
+    ]
+  },
+  "thresholds": {
+    "verification": 0.8,
+    "humanReview": 0.6
+  },
+  "actions": {
+    "triggered": ["AutomatedVerification"],
+    "recommended": ["FormalProofGeneration"]
+  },
+  "metadata": {
+    "modelId": "AI-Integration-Service-v1.0",
     "version": "1.0.0"
   }
 }
@@ -195,6 +251,9 @@ The metadata schema defines a standard API for accessing and manipulating metada
    - `verifyConsistency()`: Verify internal consistency of metadata
    - `verifyReferences()`: Verify that all references are valid
    - `verifyConstraints()`: Verify that all constraints are satisfied
+   - `getConfidenceScore(id)`: Retrieve confidence score for a component
+   - `queryConfidenceScores(filter)`: Query confidence scores using filters
+   - `updateVerificationStatus(id, status)`: Update verification status
 
 ## Metadata Serialization
 
@@ -226,3 +285,5 @@ The metadata schema is designed to support formal verification:
 2. **Invariant Specifications**: Formal specifications of invariants that must be preserved
 3. **Proof Hints**: Hints for automated theorem provers
 4. **Verification Status**: Tracking of verification status for different properties
+5. **Confidence Scores**: Confidence scores for AI-generated or AI-transformed code
+6. **Verification Thresholds**: Thresholds for triggering verification based on confidence scores
