@@ -1,138 +1,97 @@
-# Training Requirements for ANRF AI Models
+# AI Model Training Requirements and Development Plan
 
 ## Overview
+This document outlines the data requirements, training methodologies, evaluation frameworks, and development plans for the AI models supporting the AI-Native Programming Paradigm, evolving across implementation phases.
 
-This document outlines the data requirements, training methodologies, and evaluation frameworks needed to develop the AI models that will operate on the AI-Native Representation Format (ANRF). These models are responsible for intent translation, optimization, explanation, and verification assistance within the AI-Native Programming Paradigm.
+## Phase 1: Internal Dogfooding - Development and Training Plan
 
-## Data Requirements
+**Goal**: Establish functional baseline AI models for core workflow validation during internal dogfooding. Focus on feasibility and basic integration over performance optimization.
 
-High-quality, large-scale datasets are crucial for training effective AI models for ANRF.
+### 1. Model Selection & Fine-tuning Strategy
 
-### 1. Core ANRF Dataset
+*   **Intent Analysis Service (v1)**:
+    *   **Model**: DistilBERT (or similar lightweight Transformer) fine-tuned for intent classification and keyword/entity extraction.
+    *   **Fine-tuning Data**:
+        *   Source: Internal technical documentation, simple requirement specifications (e.g., user stories, feature descriptions), synthetically generated examples mapping text to structured intent.
+        *   Size Estimate: ~1,000-5,000 examples.
+        *   Format: Pairs of (input text, structured intent JSON).
+    *   **Fine-tuning Process**: Standard supervised fine-tuning using Hugging Face `Trainer` or similar. Focus on classifying intent type (e.g., create function, modify class) and extracting key parameters.
+    *   **Constraint Parsing**: Implement rule-based parsing (e.g., using regex or simple grammar) for basic constraints mentioned in the intent text. This is separate from the ML model initially.
 
-*   **Content**: A large corpus of ANRF instances representing diverse programs across various domains and programming paradigms. Each instance must be complete with all three layers (IML, SML, EL) and validated cross-layer references.
-*   **Sources**:
-    *   **Semi-automated Conversion**: Tools to convert existing codebases (e.g., from GitHub, Stack Overflow) and associated artifacts (documentation, commit messages, issues) into ANRF format. This requires significant effort in inferring IML and SML information.
-    *   **Synthetic Generation**: Generate ANRF instances programmatically based on formal grammars or semantic templates.
-    *   **Human Annotation/Curation**: Human developers creating or refining ANRF instances, especially the IML layer.
-    *   **Simulation**: Generating ANRF instances through simulated development processes or transformations.
-*   **Annotation**: Metadata within ANRF (IML, SML, Provenance) serves as implicit annotation. Additional explicit labels might be needed for specific tasks (e.g., bug locations, optimal transformation sequences).
-*   **Challenge**: Bootstrapping this dataset is a major undertaking. Initial focus might be on specific domains or language subsets.
+*   **Generation Service (v1)**:
+    *   **Model**: Code-Llama 7B (or StarCoder variant) fine-tuned specifically for generating ANRF based on structured intent.
+    *   **Fine-tuning Data**:
+        *   Source: Synthetically generated (structured intent -> ANRF) pairs, small internal codebase manually translated to ANRF format.
+        *   Size Estimate: ~5,000-10,000 examples. Requires close collaboration with Language Designer for ANRF format stability.
+        *   Format: Pairs of (structured intent JSON, ANRF instance).
+    *   **Fine-tuning Process**: Supervised fine-tuning focusing on generating structurally valid ANRF that matches the input intent. Use techniques to handle structured output if necessary (e.g., constrained decoding, specific tokenization).
 
-### 2. Intent-to-ANRF Parallel Data
+*   **Verification Service (v1 - AI Checkers)**:
+    *   **Model**: Primarily rule-based for Phase 1. No ML model training required initially.
+    *   **Development**: Implement Python functions based on ANRF specifications for:
+        *   Structural Consistency Checks (e.g., validating graph structure, layer linkages).
+        *   Basic Type Checking (using type information embedded in ANRF metadata).
 
-*   **Content**: Pairs of human intent expressions (natural language, examples, sketches) and their corresponding ground-truth ANRF representations.
-*   **Sources**:
-    *   Human developers specifying intent and implementing the corresponding ANRF (potentially using the paradigm's tools).
-    *   Mining requirements documents, specifications, and user stories linked to code implementations (followed by conversion to ANRF).
-*   **Use**: Training intent translation models (`Gen(I -> R)`).
+### 2. Service Implementation Plan
 
-### 3. Transformation Data
+*   **Technology**: Python 3.9+, FastAPI for API framework.
+*   **Intent Analysis Service**:
+    *   Implement API endpoint `/intent/analyze`.
+    *   Load fine-tuned NLU model for inference.
+    *   Integrate rule-based constraint parser.
+    *   Interact with Metadata DB for context (if needed, may be simple context passing initially).
+    *   Format output according to API specification.
+    *   Integrate logging client.
+*   **Generation Service**:
+    *   Implement API endpoint `/generate`.
+    *   Load fine-tuned Code LLM from Model Registry for inference.
+    *   Implement basic Conformal Prediction logic (e.g., using nonconformity scores based on sequence probability) to generate a single sequence-level confidence score.
+    *   Interact with ANRF Registry (write) and Metadata DB (write) to store results.
+    *   Format output according to API specification.
+    *   Integrate logging client.
+*   **Verification Service**:
+    *   Implement API endpoint `/verify/{anrfId}`.
+    *   Implement rule-based structural and type checking logic.
+    *   Interact with ANRF Registry (read) and Metadata DB (read).
+    *   Format output according to API specification.
+    *   Integrate logging client.
 
-*   **Content**: Pairs of ANRF instances before and after known-correct transformations (optimizations, refactorings). Includes transformation records from the SML.
-*   **Sources**:
-    *   Applying traditional, provably correct compiler optimizations to ANRF instances and recording the changes.
-    *   Logging transformations performed by human developers or verified AI agents.
-    *   Synthetically applying transformation rules.
-*   **Use**: Training optimization models (`Opt(R -> R')`), semantic equivalence checkers, and transformation verification models.
+### 3. Data Requirements & Preparation (Phase 1)
 
-### 4. Explanation Data
+*   **Intent Data**: Need ~1k-5k examples mapping natural language/simple specs to structured intent format. Requires manual creation or semi-automated generation based on templates.
+*   **ANRF Generation Data**: Need ~5k-10k examples mapping structured intent to valid ANRF. Requires a stable v1 ANRF format definition from Language Designer. Significant effort needed for manual translation or synthetic generation tool development.
+*   **Data Storage**: Store raw and processed training data in designated object storage buckets (e.g., S3).
+*   **Versioning**: Use simple versioning for datasets (e.g., timestamped folders).
 
-*   **Content**: ANRF instances paired with high-quality human-written explanations (summaries, rationales, behavioral descriptions) at different abstraction levels.
-*   **Sources**:
-    *   Human experts writing explanations for ANRF examples.
-    *   Mining code comments, documentation, and tutorials associated with code (converted to ANRF).
-    *   Leveraging user feedback on AI-generated explanations.
-*   **Use**: Training explanation generation models (`View(R -> H)`).
+### 4. Training & Evaluation Pipeline (v1)
 
-### 5. Verification Data
+*   **Process**: Semi-automated initially.
+    1.  **Data Prep**: Scripts to format raw data into training pairs. Manual execution.
+    2.  **Fine-tuning**: Execute fine-tuning scripts (e.g., Python scripts using Hugging Face `Trainer`). Manual trigger. Requires GPU resources for LLM fine-tuning.
+    3.  **Evaluation**: Run evaluation scripts against a hold-out test set. Metrics:
+        *   Intent Analysis: Classification accuracy, F1 score for entity extraction.
+        *   Generation: ANRF structural validity (pass/fail), BLEU/ROUGE scores against reference ANRF (limited utility), semantic equivalence checks (manual review initially).
+    4.  **Model Registration**: Manually upload trained model artifacts and evaluation results to the v1 Model Registry (MLflow Tracking Server or S3). Tag models appropriately (e.g., `phase-1`, `intent-v1`).
+*   **Infrastructure**: Requires access to compute resources (CPU/GPU) for training, object storage for data/models, and the v1 Model Registry.
 
-*   **Content**: ANRF instances labeled with known bugs, violated properties, or associated formal proofs/verification results.
-*   **Sources**:
-    *   Annotating ANRF instances derived from code with known bugs (e.g., from bug databases).
-    *   Applying formal verification tools to ANRF instances and recording results.
-    *   Mutation testing: introducing semantic errors into ANRF and labeling them.
-*   **Use**: Training AI models for bug finding, property generation, and verification assistance.
+### 5. Integration Points (Phase 1)
 
-## Training Methodologies
+*   **Model Loading**: Services load models from the v1 Model Registry based on tags/versions.
+*   **Data Storage**: Generation Service writes to ANRF Registry and Metadata DB. Verification/Viewing Services read from them.
+*   **Monitoring**: All services push logs and basic metrics to the central Monitoring & Logging system.
 
-### 1. Supervised Learning
+### 6. Confidence Scoring (Phase 1)
 
-*   **Application**: Training models for tasks with clear input-output pairs (e.g., intent-to-ANRF translation, explanation generation from ANRF, bug detection).
-*   **Techniques**: Standard supervised training using cross-entropy loss, sequence-to-sequence learning, graph-to-graph translation. Requires labeled datasets (Intent-to-ANRF, Explanation Data, Verification Data).
+*   **Implementation**: Implement a basic Conformal Prediction wrapper around the Generation Service's LLM.
+*   **Method**: Use sequence likelihood or similar simple nonconformity measure. Calibrate on a small hold-out set to provide a single, sequence-level confidence score (e.g., probability that the generated ANRF is "correct" based on calibration data).
+*   **Output**: Include the `confidenceScore` (float 0-1) in the `/generate` API response.
 
-### 2. Self-Supervised Learning (SSL)
+## Future Phases (High-Level Plan)
 
-*   **Application**: Pre-training models on the large Core ANRF Dataset without explicit labels to learn general representations of ANRF structure and semantics.
-*   **Techniques**:
-    *   **Masked Modeling**: Masking parts of the ANRF (nodes/edges in EL/SML, text in IML) and training models to predict them.
-    *   **Contrastive Learning**: Training models to distinguish similar vs. dissimilar ANRF fragments or transformation pairs.
-    *   **Graph Autoencoders**: Learning compressed representations of ANRF graphs.
-*   **Benefit**: Leverages large unlabeled ANRF data; learned representations can be fine-tuned for downstream tasks.
+*   **Phase 2**: Introduce RLHF for Generation, GNNs for Verification, automated retraining pipelines (MLOps v1), more sophisticated confidence scoring (token-level).
+*   **Phase 3**: Domain adaptation, scalable generation architectures, AI assistance for formal methods, RL for optimization, advanced MLOps (A/B testing, drift detection).
+*   **Phase 4**: Security hardening, multi-objective optimization, potential personalization/federated learning, mature MLOps.
 
-### 3. Reinforcement Learning (RL)
-
-*   **Application**: Training agents for sequential decision-making tasks like code optimization (`Opt(R -> R')`) or guiding formal provers.
-*   **Techniques**:
-    *   Define state (current ANRF), actions (transformations), reward (optimization improvement, proof progress).
-    *   Use algorithms like PPO, DQN.
-    *   **RL with Formal Constraints**: Incorporate checks for semantic preservation directly into the learning process or reward function.
-    *   **RL from Human Feedback (RLHF)**: Fine-tune agents based on human judgments of optimization quality or explanation usefulness.
-*   **Challenge**: Defining appropriate reward functions and ensuring safety/correctness constraints are met.
-
-### 4. Multi-Task Learning (MTL)
-
-*   **Application**: Training single models or shared representations for multiple related tasks (e.g., generation, explanation, verification) simultaneously.
-*   **Techniques**: Shared model backbones with task-specific heads, joint loss functions.
-*   **Benefit**: Can improve generalization and data efficiency by leveraging shared knowledge across tasks. Requires careful architecture design.
-
-### 5. Curriculum Learning
-
-*   **Application**: Gradually increasing the complexity of training data or tasks.
-*   **Techniques**: Start training on simpler ANRF instances (e.g., smaller programs, fewer layers populated) or basic tasks before moving to more complex ones.
-*   **Benefit**: Can improve training stability and final model performance.
-
-### 6. Transfer Learning & Fine-Tuning
-
-*   **Application**: Leveraging pre-trained models (e.g., large code models, LLMs) as a starting point.
-*   **Techniques**: Fine-tune pre-trained models on ANRF-specific datasets and tasks.
-*   **Benefit**: Reduces the amount of ANRF-specific data needed for initial model development.
-
-## Evaluation Frameworks
-
-Rigorous evaluation is needed to assess model performance and ensure trustworthiness.
-
-### 1. Task-Specific Metrics
-
-*   **Intent Translation**: Semantic accuracy (comparing generated ANRF to ground truth), BLEU/ROUGE scores (for NL aspects), structural correctness metrics.
-*   **Optimization**: Performance improvement (speed, size) on benchmark suites, semantic equivalence verification success rate.
-*   **Explanation**: Human ratings (clarity, correctness, usefulness), automated metrics (e.g., ROUGE against reference explanations), task success rate (e.g., debugging time reduction).
-*   **Verification Assistance**: Bug detection rate (precision/recall), proof success rate/time reduction, property relevance scores.
-
-### 2. Semantic Preservation Evaluation
-
-*   **Formal Verification**: Apply formal methods to verify semantic equivalence (≈) or refinement (⊑) for transformations generated or suggested by AI.
-*   **Differential Testing**: Compare the outputs of original and AI-modified ANRF on a large test suite.
-*   **Invariant Checking**: Define key semantic invariants and automatically check if they hold after AI operations.
-
-### 3. Robustness & Generalization Testing
-
-*   Evaluate models on out-of-distribution ANRF instances (different domains, complexities, programming styles).
-*   Test robustness against noisy or ambiguous inputs.
-*   Assess performance on diverse benchmark suites.
-
-### 4. Human Evaluation
-
-*   Crucial for tasks involving human interaction (intent translation, explanation).
-*   Use user studies, A/B testing, and expert reviews to assess usability, comprehensibility, and trustworthiness.
-
-## Infrastructure Requirements
-
-*   **Data Storage & Management**: Scalable storage for large ANRF datasets. Versioning and provenance tracking for data.
-*   **Compute Resources**: Significant GPU resources for training large models (LLMs, GNNs, RL agents).
-*   **Training Orchestration**: Frameworks for managing complex training pipelines (SSL pre-training, supervised fine-tuning, RL).
-*   **Evaluation Platform**: Infrastructure for running automated evaluations and collecting human feedback.
-
-## Conclusion
-
-Training the AI models required for the AI-Native Programming Paradigm is a significant undertaking, heavily dependent on the availability of large, high-quality ANRF datasets. A combination of supervised, self-supervised, and reinforcement learning techniques, potentially within multi-task and curriculum learning frameworks, will be necessary. Rigorous evaluation focusing on semantic correctness, task performance, and human factors is essential for developing trustworthy and effective AI systems for ANRF. Dataset bootstrapping and leveraging transfer learning will be key initial strategies.
+## Change Log
+- 2025-04-07: Added detailed development and training plan for Phase 1 AI models.
+- 2025-04-07: Initial document structure created based on AI Capability Roadmap.

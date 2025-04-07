@@ -1,181 +1,181 @@
 # System Architecture for AI-Native Programming Paradigm
 
 ## Overview
-This document outlines the technical architecture for the AI-Native Programming Paradigm. It adopts a service-oriented approach to provide flexibility, scalability, and modularity. The architecture supports the generation, optimization, verification, execution, and visualization of the AI-Native Representation Format (ANRF).
+This document outlines the technical architecture for the AI-Native Programming Paradigm, including core services, infrastructure components, data flow, and integration points. It evolves across implementation phases.
 
-## Core Architectural Principles
-1.  **Service-Oriented**: Key functionalities (generation, optimization, verification, etc.) are exposed as independent services.
-2.  **Layered ANRF**: Architecture supports the layered nature of ANRF, allowing separate processing of execution, semantic, and intent layers while maintaining linkage.
-3.  **API-Driven**: Interactions between components and external tools are managed through well-defined APIs.
-4.  **Scalability**: Designed for horizontal scaling to handle varying loads.
-5.  **Extensibility**: Allows for the addition of new AI models, optimization techniques, and verification methods.
-6.  **Interoperability**: Provides interfaces for integration with existing development ecosystems (IDEs, CI/CD, version control).
-7.  **Security**: Incorporates security considerations at all levels.
+## Core Principles
+- **Service-Oriented**: Key functionalities are encapsulated in independent services.
+- **Scalable**: Architecture designed to handle increasing load and complexity.
+- **Extensible**: Allows for future addition of new capabilities and integrations.
+- **Secure**: Incorporates security considerations at all levels.
+- **Resilient**: Designed for fault tolerance and graceful degradation.
 
-## High-Level Components
+## High-Level Architecture Diagram
 
 ```mermaid
 graph TD
-    subgraph Developer Environment
-        IDE_Plugin[IDE Plugin]
-        CLI_Tool[CLI Tool]
-        VC_Integration[Version Control Integration]
+    subgraph Developer Tools
+        IDEPlugin[IDE Plugin (v1)]
+        CICD[CI/CD Pipeline (v1)]
+        Collab[Collaboration Tools (v1)]
     end
 
-    subgraph Core ANRF Services
-        IntentService[Intent Analysis Service]
-        GenService[Generation Service]
-        OptService[Optimization Service]
-        VerifService[Verification Service]
-        ViewService[Viewing Service (ANRF -> Human View)]
-        ExecService[Execution Service/Runtime Interface]
+    subgraph Core Platform - Phase 1
+        APIGateway[API Gateway (v1)]
+
+        subgraph Services
+            IntentService[Intent Analysis Service (v1)]
+            GenService[Generation Service (v1)]
+            ViewService[Viewing Service (v1)]
+            VerifyService[Verification Service (v1)]
+            ExecService[Execution Service (v1)]
+        end
+
+        subgraph Infrastructure
+            ANRFRegistry[ANRF Registry (v1)]
+            MetadataDB[Metadata DB (v1)]
+            ModelRegistry[AI Model Registry (v1)]
+            Monitoring[Monitoring & Logging (v1)]
+        end
     end
 
-    subgraph Supporting Infrastructure
-        APIGateway[API Gateway]
-        ANRF_Registry[ANRF Registry/Storage]
-        Metadata_DB[Metadata Database]
-        AI_Model_Registry[AI Model Registry]
-        MLOps_Pipeline[MLOps Pipeline]
-        Monitoring[Monitoring & Logging]
-    end
+    IDEPlugin --> APIGateway
+    CICD --> APIGateway
+    Collab --> APIGateway
 
-    Developer_Environment -- API Calls --> APIGateway
-    APIGateway -- Routes --> Core_ANRF_Services
-    Core_ANRF_Services -- Access/Store --> ANRF_Registry
-    Core_ANRF_Services -- Access/Store --> Metadata_DB
-    Core_ANRF_Services -- Use --> AI_Model_Registry
-    AI_Model_Registry -- Managed By --> MLOps_Pipeline
-    Core_ANRF_Services -- Logs/Metrics --> Monitoring
-    APIGateway -- Logs/Metrics --> Monitoring
-    Developer_Environment -- Logs/Metrics --> Monitoring
+    APIGateway --> IntentService
+    APIGateway --> GenService
+    APIGateway --> ViewService
+    APIGateway --> VerifyService
+    APIGateway --> ExecService
+
+    IntentService --> MetadataDB
+    GenService --> ANRFRegistry
+    GenService --> MetadataDB
+    GenService --> ModelRegistry
+    ViewService --> ANRFRegistry
+    ViewService --> MetadataDB
+    VerifyService --> ANRFRegistry
+    VerifyService --> MetadataDB
+    VerifyService --> ModelRegistry
+    ExecService --> ANRFRegistry
+
+    IntentService --> Monitoring
+    GenService --> Monitoring
+    ViewService --> Monitoring
+    VerifyService --> Monitoring
+    ExecService --> Monitoring
+    APIGateway --> Monitoring
 ```
 
-## Component Descriptions
+## Phase 1: Internal Dogfooding - Technical Specifications
 
-*   **Developer Environment**: Tools developers interact with directly (IDE plugins, CLI).
-*   **API Gateway**: Single entry point for all service requests, handling authentication, routing, and rate limiting. (e.g., AWS API Gateway, Kong, Nginx)
-*   **Intent Analysis Service**: Processes developer intent (natural language, specs) and translates it into a structured format for generation. (Tech: Python/FastAPI, NLP libs like spaCy/Hugging Face Transformers)
-*   **Generation Service**: Takes structured intent and generates initial ANRF instances using AI models. Provides confidence scores. (Tech: Python/PyTorch/TensorFlow, specialized models)
-*   **Optimization Service**: Applies optimization techniques to ANRF instances, preserving semantics. (Tech: C++/LLVM-like framework, rule-based systems)
-*   **Verification Service**: Verifies ANRF properties, checks constraints, performs semantic equivalence checks, and integrates formal methods. Provides tiered verification results. (Tech: Python/Z3, formal method tools interface)
-*   **Viewing Service**: Translates ANRF into human-readable formats (code, diagrams) based on developer requests and abstraction levels. (Tech: Node.js/Express, graph visualization libs)
-*   **Execution Service/Runtime Interface**: Interfaces with target execution environments or provides a runtime for executing ANRF. (Tech: Depends on target - e.g., WASM runtime, JVM interface, native compiler backend)
-*   **ANRF Registry/Storage**: Persistent storage for ANRF instances and their versions. (Tech: Object storage like S3, specialized binary format storage, potentially Git LFS integration)
-*   **Metadata Database**: Stores semantic linkage, intent mapping, verification results, and other metadata associated with ANRF instances. (Tech: Graph Database like Neo4j, or Document DB like MongoDB)
-*   **AI Model Registry**: Stores and versions AI models used by the services. (Tech: MLflow, SageMaker Model Registry, Vertex AI Model Registry)
-*   **MLOps Pipeline**: Manages the training, evaluation, deployment, and monitoring of AI models, incorporating developer feedback. (Tech: Jenkins/GitLab CI/Kubeflow Pipelines, MLflow/DVC)
-*   **Monitoring & Logging**: Centralized system for tracking system health, performance, and usage. (Tech: ELK Stack, Prometheus/Grafana, Datadog)
+### 1. Core Platform Services (v1)
 
-## Technical Implementation Roadmap (Phased)
+#### a. Intent Analysis Service (v1)
+*   **Purpose**: Translate basic developer intent (text input) into a structured format for the Generation Service.
+*   **Technology**: Python (FastAPI), spaCy/NLTK for basic NLP, rule-based constraint parsing.
+*   **API (`/intent/analyze`)**:
+    *   Input: `{ "inputText": "string", "context": { "module": "string", "function": "string" } }`
+    *   Output: `{ "structuredIntent": { ... }, "constraints": [ ... ], "analysisId": "uuid" }` or `{ "error": "string" }`
+*   **Dependencies**: Metadata DB (for context), Monitoring Service.
+*   **Deployment**: Containerized service (Docker).
 
-This roadmap aligns with the `adoption-strategy.md`.
+#### b. Generation Service (v1)
+*   **Purpose**: Generate ANRF instances from structured intent. Provide basic confidence scores.
+*   **Technology**: Python (FastAPI), Hugging Face Transformers (fine-tuned Code-Llama/StarCoder), basic Conformal Prediction library.
+*   **API (`/generate`)**:
+    *   Input: `{ "structuredIntent": { ... }, "constraints": [ ... ], "analysisId": "uuid" }`
+    *   Output: `{ "anrfId": "uuid", "confidenceScore": "float (0-1)", "generationId": "uuid" }` or `{ "error": "string" }`
+*   **Dependencies**: ANRF Registry (write), Metadata DB (write), AI Model Registry (read models), Monitoring Service.
+*   **Deployment**: Containerized service (Docker), potentially GPU-enabled nodes.
 
-### Phase 1: Internal Dogfooding (Months 1-3) - Focus: Core Functionality & Stability
-*   **Goal**: Validate core intent->generate->view loop, basic verification, single execution path. Establish foundational infrastructure.
-*   **Services**:
-    *   **Intent Analysis Service (v1)**:
-        *   Task: Implement basic NLP pipeline for keyword extraction and intent structuring.
-        *   Tech: Python/FastAPI, spaCy.
-        *   API: Define v1 API for submitting intent and receiving structured representation.
-    *   **Generation Service (v1)**:
-        *   Task: Implement core ANRF generation logic using a baseline AI model. Integrate basic Conformal Prediction for confidence scores.
-        *   Tech: Python/PyTorch, baseline transformer model.
-        *   API: Define v1 API for requesting ANRF generation from structured intent.
-    *   **Viewing Service (v1)**:
-        *   Task: Implement basic ANRF parser and translator to a single human-readable format (e.g., Python-like pseudocode).
-        *   Tech: Python/FastAPI or Node.js/Express.
-        *   API: Define v1 API for requesting human-readable view of ANRF.
-    *   **Verification Service (v1)**:
-        *   Task: Implement basic structural consistency checks (e.g., layer linkage) and type checking based on ANRF metadata.
-        *   Tech: Python.
-        *   API: Define v1 API for submitting ANRF for basic checks.
-    *   **Execution Service (v1)**:
-        *   Task: Implement an interpreter or interface for a single, simple target environment (e.g., execute ANRF directly via a Python interpreter or translate to WASM).
-        *   Tech: Python or WASM runtime.
-        *   API: Define v1 API for submitting ANRF for execution.
-*   **Infrastructure**:
-    *   **API Gateway (v1)**:
-        *   Task: Set up basic request routing and simple API key authentication.
-        *   Tech: Nginx or managed cloud gateway (e.g., AWS API Gateway).
-    *   **ANRF Registry (v1)**:
-        *   Task: Implement storage using object storage with basic versioning by hash/ID.
-        *   Tech: AWS S3 / MinIO.
-    *   **Metadata DB (v1)**:
-        *   Task: Set up schema for core ANRF ID -> Intent ID, ANRF ID -> Semantic Linkage Map.
-        *   Tech: PostgreSQL or MongoDB.
-    *   **AI Model Registry (v1)**:
-        *   Task: Manual tracking and deployment of initial models (e.g., storing models in S3).
-        *   Tech: S3 + configuration files.
-    *   **Monitoring & Logging (v1)**:
-        *   Task: Implement basic service health checks and centralized logging.
-        *   Tech: CloudWatch Logs / ELK Stack (basic setup).
-*   **Interfaces**:
-    *   **Basic IDE Plugin (v1)**:
-        *   Task: Develop plugin for one target IDE (e.g., VS Code) allowing intent input via text box, triggering generation, displaying basic ANRF structure/visualization, and showing human-readable view.
-        *   Tech: TypeScript/VS Code Extension API.
-    *   **Core Service APIs (v1)**:
-        *   Task: Define and document initial REST/gRPC APIs for core services.
-        *   Tech: OpenAPI/Swagger.
-*   **Key Challenges**: Establishing stable service communication, defining initial ANRF binary format, baseline AI model performance, initial developer workflow integration.
+#### c. Viewing Service (v1)
+*   **Purpose**: Translate ANRF instances into basic human-readable formats (e.g., pseudocode).
+*   **Technology**: Python (FastAPI), template engine (e.g., Jinja2), ANRF parsing library.
+*   **API (`/view/{anrfId}`)**:
+    *   Input: Path parameter `anrfId`. Query parameter `format` (e.g., `pseudocode`, `structure`).
+    *   Output: `{ "content": "string", "format": "string" }` or `{ "error": "string" }`
+*   **Dependencies**: ANRF Registry (read), Metadata DB (read), Monitoring Service.
+*   **Deployment**: Containerized service (Docker).
 
-### Phase 2: Pilot Program (Months 4-9) - Focus: Workflow Validation & Enhanced Features
-*   **Services**:
-    *   Intent Analysis Service (v2 - Improved ambiguity resolution, constraint handling)
-    *   Generation Service (v2 - Multiple generation options, refined confidence scores)
-    *   Optimization Service (v1 - Basic optimization patterns)
-    *   Verification Service (v2 - Tiered verification levels, semantic equivalence checks)
-    *   Viewing Service (v2 - Multiple abstraction levels, enhanced visualization support)
-    *   Execution Service (v2 - Support for additional target environments/compilers)
-*   **Infrastructure**:
-    *   API Gateway (v2 - Rate limiting, improved security)
-    *   ANRF Registry (v2 - Semantic diffing support)
-    *   Metadata DB (v2 - Schema for verification results, optimization history)
-    *   AI Model Registry (v2 - Integration with MLOps pipeline)
-    *   MLOps Pipeline (v1 - Basic training/deployment automation, feedback ingestion)
-    *   Monitoring & Logging (v2 - Performance metrics, tracing)
-*   **Interfaces**:
-    *   IDE Plugin (v2 - Semantic VC integration, collaboration features, MLOps visibility)
-    *   CI/CD Integration (v1 - Automated checks, verification reporting)
-    *   Service APIs (v2 - Support for new features)
-*   **Goals**: Validate end-to-end workflow, semantic version control, tiered verification, basic MLOps integration, initial optimization.
+#### d. Verification Service (v1)
+*   **Purpose**: Perform basic structural consistency and type checks on ANRF.
+*   **Technology**: Python (FastAPI), ANRF validation library, basic type checker.
+*   **API (`/verify/{anrfId}`)**:
+    *   Input: Path parameter `anrfId`. Query parameter `checks` (e.g., `structure`, `types`).
+    *   Output: `{ "results": [ { "check": "string", "status": "PASS|FAIL|WARN", "details": "string" } ], "verificationId": "uuid" }` or `{ "error": "string" }`
+*   **Dependencies**: ANRF Registry (read), Metadata DB (read), Monitoring Service.
+*   **Deployment**: Containerized service (Docker).
 
-### Phase 3: Targeted Rollout (Months 10-18) - Focus: Scalability, Performance & Advanced AI
-*   **Services**:
-    *   Intent Analysis Service (v3 - Domain-specific intent adaptation)
-    *   Generation Service (v3 - Scalable generation, advanced confidence modeling)
-    *   Optimization Service (v2 - Advanced optimization strategies, adaptive optimization)
-    *   Verification Service (v3 - Formal verification integration, property checking)
-    *   Viewing Service (v3 - Customizable views, advanced diagrams)
-    *   Execution Service (v3 - Performance optimization, broader environment support)
-*   **Infrastructure**:
-    *   API Gateway (v3 - Advanced policy enforcement)
-    *   ANRF Registry (v3 - Scalability improvements, fine-grained access control)
-    *   Metadata DB (v3 - Scalability, complex query support)
-    *   MLOps Pipeline (v2 - Automated retraining, A/B testing, advanced monitoring)
-    *   Monitoring & Logging (v3 - Anomaly detection, root cause analysis support)
-    *   Scaling Framework implementation (see `scaling-framework.md`)
-*   **Interfaces**:
-    *   IDE Plugin (v3 - Advanced AI Assistance integration, formal verification display)
-    *   CI/CD Integration (v2 - Policy enforcement, performance gating)
-    *   SDKs/Extension APIs (v1 - For third-party tool integration)
-*   **Goals**: Ensure platform scalability and performance, integrate formal methods, enable advanced AI assistance, support initial ecosystem integration.
+#### e. Execution Service (v1)
+*   **Purpose**: Provide a basic execution environment for ANRF (interpretation or simple compilation). Primarily for debugging/testing.
+*   **Technology**: Python (FastAPI), ANRF interpreter/simple JIT compiler (target: e.g., WASM or Python bytecode).
+*   **API (`/execute/{anrfId}`)**:
+    *   Input: Path parameter `anrfId`. Body `{ "inputs": { ... } }`
+    *   Output: `{ "output": { ... }, "logs": [ "string" ], "executionId": "uuid" }` or `{ "error": "string" }`
+*   **Dependencies**: ANRF Registry (read), Monitoring Service.
+*   **Deployment**: Containerized service (Docker).
 
-### Phase 4: General Availability (Months 19+) - Focus: Ecosystem, Maturity & Market Readiness
-*   **Services**:
-    *   Focus on stability, performance, and extensibility based on broad feedback.
-    *   Potential for specialized service variants (e.g., high-security verification).
-*   **Infrastructure**:
-    *   Focus on operational excellence, cost optimization, global deployment.
-    *   Mature MLOps practices.
-    *   Robust security posture.
-*   **Interfaces**:
-    *   Stable v1 SDKs/APIs with long-term support commitment.
-    *   Marketplace integration APIs.
-    *   Advanced customization options for IDE/Tools.
-*   **Goals**: Provide a stable, scalable, and extensible platform ready for broad adoption and a thriving ecosystem.
+### 2. Basic Infrastructure (v1)
+
+#### a. API Gateway (v1)
+*   **Purpose**: Single entry point for all external requests, basic routing, authentication (API keys for Phase 1).
+*   **Technology**: Nginx, Kong, or cloud provider gateway (e.g., AWS API Gateway).
+*   **Configuration**: Route requests to appropriate backend services. Implement basic rate limiting.
+*   **Dependencies**: Core Platform Services, Monitoring Service.
+
+#### b. ANRF Registry (v1)
+*   **Purpose**: Store and version ANRF instances.
+*   **Technology**: Object storage (e.g., AWS S3, MinIO) with versioning enabled. Naming convention: `anrf/{anrfId}/{version}.anrf`.
+*   **Interface**: S3 API or equivalent.
+*   **Dependencies**: Generation Service (write), Viewing/Verification/Execution Services (read).
+
+#### c. Metadata DB (v1)
+*   **Purpose**: Store metadata related to intent, generation, verification, ANRF structure, and relationships.
+*   **Technology**: PostgreSQL or similar relational database.
+*   **Schema (Initial)**: Tables for `Intents`, `Generations`, `ANRFs`, `Verifications`, `Contexts`, `Feedback`. Focus on linking IDs (e.g., `analysisId`, `generationId`, `anrfId`).
+*   **Dependencies**: Intent, Generation, Viewing, Verification Services.
+
+#### d. AI Model Registry (v1)
+*   **Purpose**: Store and version AI models used by services.
+*   **Technology**: MLflow Tracking Server or simple object storage (e.g., S3) with versioning.
+*   **Interface**: MLflow API or S3 API.
+*   **Dependencies**: Generation Service, Verification Service (read models).
+
+#### e. Monitoring & Logging (v1)
+*   **Purpose**: Collect logs and basic metrics from services.
+*   **Technology**: Centralized logging (e.g., ELK stack - Elasticsearch, Logstash, Kibana or Grafana Loki). Basic metrics collection (e.g., Prometheus client libraries in services, Prometheus server, Grafana for dashboards).
+*   **Configuration**: Services push logs; Prometheus scrapes metrics endpoints. Basic dashboards for service health and request counts.
+*   **Dependencies**: All services, API Gateway.
+
+### 3. Service APIs and Data Formats
+
+*   **Communication**: RESTful APIs using JSON.
+*   **Authentication**: Simple API Key authentication via API Gateway for Phase 1.
+*   **ANRF Format**: Initial binary or structured format (e.g., Protocol Buffers, MessagePack) as defined by Language Designer. Versioning essential.
+*   **Identifiers**: Use UUIDs for all major entities (analysis, generation, ANRF, verification, execution).
+
+### 4. Deployment Architecture (v1)
+
+*   **Platform**: Kubernetes (e.g., EKS, GKE, K3s) or Docker Compose for simplicity in early stages.
+*   **Containerization**: All services packaged as Docker containers.
+*   **CI/CD**: Basic pipeline (e.g., GitHub Actions, Jenkins) for building containers and deploying to the chosen platform. Manual triggers for Phase 1.
+
+### 5. Development Environment Setup (v1)
+
+*   **Local Setup**: Docker Compose configuration to run all services and infrastructure locally.
+*   **Shared Dev Cluster**: Optional Kubernetes cluster for shared testing.
+*   **Tooling**: Standard language toolchains (Python), Docker, `kubectl` (if using Kubernetes).
+*   **Documentation**: README files for each service explaining setup and basic usage.
+
+### 6. Technical Dependencies
+
+*   **Programming Languages**: Primarily Python 3.9+.
+*   **Frameworks**: FastAPI, Hugging Face Transformers, spaCy/NLTK, MLflow, Prometheus client, logging libraries.
+*   **Infrastructure**: Docker, Kubernetes (optional), PostgreSQL, Object Storage (S3 compatible), ELK/Loki+Prometheus+Grafana.
+*   **External Services**: Cloud provider services (if applicable for deployment, storage, etc.).
 
 ## Change Log
-- 2025-04-07: Added detailed technical tasks and technologies for Phase 1 implementation. Updated Component Descriptions with potential tech examples.
-- 2025-04-07: Added Technical Implementation Roadmap section aligned with Adoption Strategy phases.
-- 2025-04-05: Initial architecture design created.
+- 2025-04-07: Added detailed technical specifications for Phase 1 (Internal Dogfooding).
+- 2025-04-05: Initial high-level architecture created.
