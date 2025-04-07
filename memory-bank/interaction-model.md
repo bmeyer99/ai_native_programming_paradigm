@@ -1,267 +1,172 @@
-# Interaction Model for Phase 1 Confidence Scoring
+# Developer Experience Design for AI-Native Tools Integration
 
-## 1. Visual Feedback System
+## Overview
+This document outlines the user experience design for integrating AI components into the development tools for the ANRF ecosystem. The design focuses on creating intuitive, transparent, and efficient interactions between developers and AI-powered development tools.
 
-### 1.1. Color Coding Design
+## 1. Confidence Score Visualization
 
-The color scheme is designed for intuitive understanding and accessibility:
+### Interface Design
+- **Inline Confidence Indicators**:
+  - Color-coded bars next to code elements (green: high confidence, yellow: medium, red: low)
+  - Gradient indicators showing confidence distribution
+  - Hover tooltips showing exact confidence percentages and prediction intervals
+  - Expandable panels for detailed probability distributions
 
-*   **Green (#2ECC71):**
-    *   Represents formally verified code
-    *   Instills immediate confidence
-    *   High contrast for visibility
-    *   Color-blind friendly
+### Interaction Patterns
+- **Primary View**: Minimalist confidence indicators that don't clutter the code view
+- **Detailed View**: Expandable panels with:
+  - Confidence score breakdown by component
+  - Alternative suggestions with their confidence scores
+  - Historical confidence trends
+  - Contributing factors to the confidence score
 
-*   **Blue (#3498DB):**
-    *   Indicates high statistical confidence
-    *   Professional, trustworthy appearance
-    *   Distinct from verification green
-    *   Maintains readability on dark/light themes
+### Progressive Disclosure
+1. Level 1: Basic color indicator
+2. Level 2: Hover tooltip with key metrics
+3. Level 3: Expanded panel with full details
+4. Level 4: Advanced analytics and historical data
 
-*   **Yellow (#F1C40F):**
-    *   Signals medium confidence
-    *   Cautionary but not alarming
-    *   Clear visibility without distraction
-    *   Sufficient contrast with background
+## 2. AI Checker Results Display
 
-*   **Orange (#E67E22):**
-    *   Shows low confidence
-    *   Attracts attention without urgency
-    *   Clearly distinguishable from red
-    *   Indicates need for review
+### Interface Design
+- **Issue Indicators**:
+  - Inline problem indicators (similar to traditional linters)
+  - Severity-based icons (error, warning, suggestion)
+  - Smart grouping of related issues
+  - Issue preview in gutter
 
-*   **Red (#E74C3C):**
-    *   Highlights verification failures
-    *   Commands immediate attention
-    *   Clear urgency signaling
-    *   High contrast for visibility
+### Interactive Resolution
+- **Quick Actions**:
+  - One-click fix suggestions
+  - Preview changes before applying
+  - Batch fix similar issues
+  - Ignore/suppress option with documentation
 
-### 1.2. Icon Integration
+### Context Presentation
+- Issue description
+- Affected code context
+- Potential impact explanation
+- Fix rationale and implications
+- Related patterns and best practices
 
-Icons are positioned in the editor gutter for consistent visibility:
+## 3. AI Assistance Integration
 
-*   **Placement:**
-    *   Aligned with line numbers
-    *   Consistent vertical positioning
-    *   Clear association with code blocks
-    *   Non-intrusive size (16x16px)
+### Interface Design
+- **Command Palette Integration**:
+  - Natural language AI assistance commands
+  - Context-aware suggestions
+  - Keyboard shortcuts for common operations
+  - Recent/frequent operations history
 
-*   **Animation:**
-    *   Subtle fade-in when scores update
-    *   No continuous animation to avoid distraction
-    *   200ms transition duration
-    *   Smooth color changes
+### Suggestion Display
+- **Inline Suggestions**:
+  - Ghost text for immediate suggestions
+  - Multiple alternatives available
+  - Explanation of why each suggestion is made
+  - Impact preview
 
-### 1.3. Visual Hierarchy
+### Interactive Refinement
+- Accept/reject mechanism with feedback
+- Modify suggestions through natural language
+- Save preferred patterns for future suggestions
+- Context retention across interactions
 
-*   **Primary Indicators:**
-    *   Color bar in gutter (3px width)
-    *   Icon showing confidence type
-    *   High contrast for immediate recognition
+## 4. MLOps Visibility
 
-*   **Secondary Information:**
-    *   Numerical score (on hover)
-    *   Confidence type label
-    *   Explanation text
+### Interface Design
+- **Status Panel**:
+  - Collapsible MLOps dashboard
+  - Key metrics at a glance
+  - Status indicators for each AI service
+  - Training/update progress indicators
 
-## 2. Hover-Over Interface
+### Information Hierarchy
+1. Critical status and alerts
+2. Active model versions and confidence
+3. Recent training activities
+4. Performance metrics and trends
+5. Detailed logs and diagnostics
 
-### 2.1. Panel Layout
+### Customization
+- Configurable dashboard layouts
+- Metric importance weighting
+- Alert thresholds and notifications
+- View presets for different roles
 
-```
-┌────────────────────────────────────┐
-│ Confidence Score: 95%              │
-│ Type: Statistical Guarantee        │
-├────────────────────────────────────┤
-│ Based on calibrated probability    │
-│ distribution of generation model   │
-├────────────────────────────────────┤
-│ [View Details] [Verify]           │
-└────────────────────────────────────┘
-```
+## 5. Feedback Collection
 
-*   **Content Organization:**
-    *   Key information at top
-    *   Clear visual hierarchy
-    *   Action buttons at bottom
-    *   Consistent padding (12px)
+### Interface Design
+- **Feedback Controls**:
+  - Quick reaction buttons (thumbs up/down)
+  - Contextual feedback forms
+  - Voice memo option for detailed feedback
+  - Screenshot/recording attachment support
 
-*   **Typography:**
-    *   Clear, readable font (system UI)
-    *   Adequate text size (14px base)
-    *   Important numbers in bold
-    *   Proper line height (1.4)
+### Feedback Flow
+1. Initial reaction capture
+2. Optional detailed feedback
+3. Impact category selection
+4. Reproduction steps (if issue)
+5. Suggested improvement
 
-### 2.2. Progressive Disclosure
+### Feedback Context
+- Automatically captured:
+  - Code context
+  - AI model version
+  - Operation type
+  - Environment details
+  - Recent interactions
 
-*   **Level 1 (Immediate):**
-    *   Confidence score
-    *   Confidence type
-    *   Basic explanation
+## Universal Design Principles
 
-*   **Level 2 (View Details):**
-    *   Detailed rationale
-    *   Contributing factors
-    *   Historical context
-    *   Similar examples
+### 1. Progressive Complexity
+- Start with simple, familiar interfaces
+- Gradually expose advanced features
+- Clear paths to deeper functionality
+- Contextual help and documentation
 
-*   **Level 3 (Technical Details):**
-    *   Model specifics
-    *   Verification proofs
-    *   Raw metadata
+### 2. Consistent Patterns
+- Unified visual language
+- Predictable interaction patterns
+- Consistent terminology
+- Familiar shortcuts and commands
 
-## 3. Real-Time Updates
+### 3. Transparency
+- Clear indication of AI vs human actions
+- Explainable AI decisions
+- Visible confidence levels
+- Access to underlying reasoning
 
-### 3.1. Update Visualization
+### 4. Control
+- Human oversight at all levels
+- Easy override mechanisms
+- Batch operation controls
+- Undo/redo support
 
-*   **Score Changes:**
-    *   Smooth color transitions (300ms)
-    *   Subtle icon update animation
-    *   Non-disruptive feedback
-    *   Clear visual difference
+### 5. Performance
+- Responsive interface
+- Asynchronous operations
+- Background processing
+- Progress indicators
 
-*   **Status Indicators:**
-    *   Loading state (subtle pulse)
-    *   Update complete (brief flash)
-    *   Error state (warning icon)
-    *   Offline mode (greyed out)
+### 6. Error Handling
+- Clear error messages
+- Recovery suggestions
+- Fallback options
+- Error prevention guidance
 
-### 3.2. Notification System
+## Accessibility Considerations
+- High contrast mode support
+- Keyboard navigation
+- Screen reader compatibility
+- Customizable font sizes
+- Alternative text for visualizations
+- Multiple interaction methods
 
-*   **Confidence Changes:**
-    *   Silent updates for minor changes
-    *   Subtle notification for significant drops
-    *   Clear alert for critical issues
-    *   Customizable thresholds
-
-*   **Connection Status:**
-    *   Quiet indication of normal operation
-    *   Clear feedback for connection issues
-    *   Automatic reconnection attempts
-    *   Manual refresh option
-
-## 4. Error Handling
-
-### 4.1. Visual Feedback
-
-*   **Connection Issues:**
-    *   Subtle offline indicator
-    *   Retry animation during reconnection
-    *   Clear error state
-    *   Action suggestions
-
-*   **Update Failures:**
-    *   Maintain last known state
-    *   Show update attempt status
-    *   Clear error indication
-    *   Recovery options
-
-### 4.2. User Recovery Flow
-
-1.  **Initial Error:**
-    *   Non-intrusive notification
-    *   Clear status indication
-    *   Maintain usability
-    *   Show help options
-
-2.  **Automatic Recovery:**
-    *   Background retry attempts
-    *   Progress indication
-    *   Success confirmation
-    *   Resume normal operation
-
-3.  **Manual Intervention:**
-    *   Clear action options
-    *   Simple retry mechanism
-    *   Refresh capability
-    *   Support access
-
-## 5. Accessibility Considerations
-
-### 5.1. Color Independence
-
-*   **Alternative Indicators:**
-    *   Icons for confidence levels
-    *   Patterns for color coding
-    *   Text labels for clarity
-    *   Numerical indicators
-
-*   **High Contrast Support:**
-    *   Adequate contrast ratios
-    *   Clear boundaries
-    *   Distinctive patterns
-    *   Text alternatives
-
-### 5.2. Keyboard Navigation
-
-*   **Focus Management:**
-    *   Clear focus indicators
-    *   Logical tab order
-    *   Keyboard shortcuts
-    *   Focus trap in modals
-
-*   **Screen Reader Support:**
-    *   Meaningful labels
-    *   Status announcements
-    *   Clear hierarchy
-    *   Action descriptions
-
-## 6. Mental Model Support
-
-### 6.1. Confidence Level Mapping
-
-*   **Conceptual Alignment:**
-    *   Clear progression of confidence levels
-    *   Intuitive color associations
-    *   Familiar iconography
-    *   Consistent terminology
-
-*   **Learning Support:**
-    *   Tool tips for new users
-    *   Progressive complexity
-    *   Context-sensitive help
-    *   Example explanations
-
-### 6.2. Action Framework
-
-*   **Clear Capabilities:**
-    *   Obvious primary actions
-    *   Discoverable advanced features
-    *   Consistent interaction patterns
-    *   Predictable outcomes
-
-*   **Feedback Loops:**
-    *   Immediate action confirmation
-    *   Clear state changes
-    *   Progress indication
-    *   Result communication
-
-## 7. Integration Points
-
-### 7.1. IDE Integration
-
-*   **Native Feel:**
-    *   Match IDE theme
-    *   Consistent positioning
-    *   Standard interactions
-    *   Familiar patterns
-
-*   **Extension Points:**
-    *   Command palette integration
-    *   Context menu items
-    *   Key binding support
-    *   Settings integration
-
-### 7.2. Workflow Integration
-
-*   **Development Process:**
-    *   Non-disruptive updates
-    *   Background processing
-    *   Async feedback
-    *   Staged verification
-
-*   **Team Collaboration:**
-    *   Shared confidence context
-    *   Consistent visualization
-    *   Collaborative verification
-    *   Status persistence
+## Success Metrics
+1. Time to complete common tasks
+2. Error recovery time
+3. Feature discovery rate
+4. User satisfaction scores
+5. AI assistance effectiveness
+6. Learning curve measurements

@@ -116,7 +116,7 @@ Ensuring correctness and security is critical for adoption and trust.
 **Decision**: Design a layered representation format with separable metadata
 **Date**: April 6, 2025
 **Decision Makers**: Theoretical Computer Scientist, Language Designer
-**Status**: In Progress
+**Status**: Approved
 
 **Context**:
 The representation format is a critical integration point between all components.
@@ -194,6 +194,62 @@ Implementation Strategist identified practical constraints (AI reliability, veri
 - APIs for partial ANRF representations
 - Legacy code interfaces (FFI, RPC) in Execution Environment
 - CI/CD integration hooks
+
+### AD5: Tiered Verification Approach
+**Decision**: Implement a tiered verification approach with three levels: "Generated", "AI-Checked", and "Formally Verified"
+**Date**: April 6, 2025
+**Decision Makers**: Theoretical Computer Scientist, AI Integration Specialist, Systems Architect
+**Status**: Approved
+
+**Context**:
+Full formal verification is computationally expensive and may not be feasible for all code in real-time. A balance between immediate feedback and strong guarantees is needed.
+
+**Alternatives Considered**:
+1. Binary verification status (verified/unverified)
+2. Continuous confidence scoring without discrete tiers
+3. Domain-specific verification levels
+
+**Decision Rationale**:
+- Tiered approach balances performance with correctness guarantees
+- "Generated" status provides immediate feedback with basic well-formedness
+- "AI-Checked" status offers intermediate assurance through AI-driven checks
+- "Formally Verified" status provides strongest guarantees through symbolic methods
+- Progressive verification aligns with developer workflow needs
+
+**Implementation Requirements**:
+- Clear definition of properties checked at each tier
+- Visual indicators for verification status in developer tools
+- Asynchronous verification pipeline for formal verification
+- AI models trained for specific "AI-Checked" properties
+- Integration with CI/CD to enforce verification requirements
+
+### AD6: Versioned ANRF Storage
+**Decision**: Implement immutable versioning for ANRF instances with verification metadata
+**Date**: April 6, 2025
+**Decision Makers**: Systems Architect, Tool Ecosystem Engineer
+**Status**: Approved
+
+**Context**:
+Asynchronous verification and collaborative development require a robust versioning system for ANRF instances.
+
+**Alternatives Considered**:
+1. Mutable ANRF instances with status updates
+2. Branching-only versioning tied to VCS
+3. Delta-based versioning with partial updates
+
+**Decision Rationale**:
+- Immutable versions ensure verification results apply to specific states
+- Version metadata includes verification status for each tier
+- Cross-version references support collaborative development
+- Asynchronous verification can be applied to specific versions
+- Clear version history supports debugging and rollback
+
+**Implementation Requirements**:
+- Efficient storage of versioned ANRF instances
+- Reference Management Service for cross-version references
+- Version creation API tied to modification operations
+- Verification status metadata per version
+- Integration with development tools for version navigation
 
 ## Process Decisions
 
@@ -277,6 +333,35 @@ Practical adoption of the paradigm requires a gradual approach that respects exi
 - Full workflow transformation tools
 - Migration patterns support
 
+### PD4: Integrated Development Tools Approach
+**Decision**: Create a comprehensive set of development tools for versioned ANRF and tiered verification
+**Date**: April 6, 2025
+**Decision Makers**: Tool Ecosystem Engineer, Developer Experience Designer
+**Status**: Approved
+
+**Context**:
+Developers need intuitive tools to interact with the new paradigm, particularly for understanding verification status and navigating between ANRF layers.
+
+**Alternatives Considered**:
+1. Minimal tooling with command-line interfaces
+2. Separate tools for different aspects (verification, versioning, visualization)
+3. Focus on API-only approach for third-party tool integration
+
+**Decision Rationale**:
+- Integrated tools provide cohesive developer experience
+- IDE integration makes verification status immediately visible
+- Semantic diffing and merging supports collaborative development
+- Visualization tools help understand complex ANRF structures
+- CI/CD integration enforces verification requirements
+
+**Implementation Requirements**:
+- IDE extensions for major platforms (VSCode initial focus)
+- Visualization components for ANRF layers and cross-references
+- Semantic diff and merge tools for version control
+- Debugging tools with verification status awareness
+- CI/CD plugins for verification enforcement
+
 ## Change Log
+- 2025-04-07 00:01: Updated with ANRF design cycle completion decisions
 - 2025-04-06 19:50: Updated with architectural decisions for practical constraints
 - 2025-04-06 18:17: Initial decision log created
