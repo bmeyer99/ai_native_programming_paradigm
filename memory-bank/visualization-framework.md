@@ -1,316 +1,285 @@
-# Visualization Framework for AI-Native Programming Tools
+# AI-Native Programming Paradigm Visualization Framework - Phase 1
 
-## Overview
-This document outlines the visualization framework and UI/UX design for the AI-Native Programming tools across implementation phases. It defines how developers will visually interact with AI-generated code, verification results, and AI assistance features through various tools.
+This document defines the visualization framework for Phase 1 (Internal Dogfooding) of the AI-Native Programming Paradigm, specifying how the ANRF format is visually represented to developers.
 
 ## Core Visualization Principles
 
-### 1. Progressive Disclosure
-- Present information in layers, revealing complexity progressively
-- Start with high-level intent and allow drill-down into implementation details
-- Use contextual cues to indicate available deeper information
-- Maintain clear paths back to higher abstraction levels
+1. **Layer-Based Organization**: Clear visual separation of Intent, Semantic, and Execution layers
+2. **Relationship Highlighting**: Visual emphasis on cross-layer relationships
+3. **Progressive Detail**: Show appropriate detail level based on context
+4. **Visual Consistency**: Maintain coherent visual language across all views
+5. **Interactive Exploration**: Enable dynamic navigation through the representation
 
-### 2. Semantic Focus
-- Emphasize meaning and intent over raw implementation
-- Visualize relationships and dependencies clearly
-- Show impact of changes across abstraction levels
-- Highlight semantic conflicts and inconsistencies
+## Visual Component Specifications
 
-### 3. AI Transparency
-- Clearly indicate AI-generated vs. human-modified components
-- Visualize AI confidence levels and decision factors
-- Show verification status and potential issues
-- Provide clear paths to AI assistance and suggestions
+### 1. Layer Views
 
-### 4. Contextual Control
-- Present relevant actions based on current context
-- Show available intervention points clearly
-- Indicate consequences of potential actions
-- Provide clear feedback on action results
+#### Intent Layer Visualization
+```
+┌──────── Intent View ────────┐
+│ Function: Array Sum         │
+│ ┌────────────────────────┐  │
+│ │ Description            │  │
+│ │ Calculate array sum    │  │
+│ └────────────────────────┘  │
+│ ┌─── Constraints ────────┐  │
+│ │ • O(n) Performance    │  │
+│ │ • Handle Empty Arrays │  │
+│ └────────────────────────┘  │
+│ Tags: [math][array][util]   │
+└──────────────────────────────┘
+```
 
-## Phased Implementation Design
+#### Semantic Layer Visualization
+```
+┌──────── Semantic Graph ────────┐
+│    ┌─────────┐                │
+│    │  sum()  │                │
+│    └────┬────┘                │
+│         │                     │
+│    ┌────┴────┐               │
+│    │ numbers │               │
+│    └────┬────┘               │
+│         │                    │
+│    ┌────┴────┐               │
+│    │ result  │               │
+│    └─────────┘               │
+└─────────────────────────────────┘
+```
 
-### Phase 1: Internal Dogfooding (Months 1-3)
+#### Execution Layer Visualization
+```
+┌──────── Execution Graph ────────┐
+│ ┌─────┐    ┌─────────┐         │
+│ │Start├───►│Param In │         │
+│ └─────┘    └────┬────┘         │
+│              ┌───┴───┐         │
+│              │ Loop  │◄─┐      │
+│              └───┬───┘  │      │
+│              ┌───┴───┐  │      │
+│              │  Add  ├──┘      │
+│              └───┬───┘         │
+│            ┌────┴────┐         │
+│            │ Return  │         │
+│            └─────────┘         │
+└─────────────────────────────────┘
+```
 
-#### IDE Plugin (v1)
-*   **Intent Input Interface**:
-    ```
-    ┌─────────────────────────────────────────────┐
-    │ Intent Input                                │
-    ├─────────────────────────────────────────────┤
-    │ [Natural Language Input Field]              │
-    │                                             │
-    │ Context: [Current Module/Function▼]         │
-    │                                             │
-    │ [Generate Code] [Add Constraints] [Help]    │
-    └─────────────────────────────────────────────┘
-    ```
+### 2. Relationship Visualization
 
-*   **Code Visualization Panel**:
-    ```
-    ┌─────────────────────────────────────────────┐
-    │ Generated Code View        [Intent▼][Code▼] │
-    ├─────────────────────────────────────────────┤
-    │ ┌─────────────┐ ┌─────────────┐            │
-    │ │ Intent View │ │ Code View   │            │
-    │ │            │ │             │            │
-    │ └─────────────┘ └─────────────┘            │
-    │                                             │
-    │ [Accept] [Modify] [Regenerate] [Explain]   │
-    └─────────────────────────────────────────────┘
-    ```
+#### Cross-Layer References
+```
+┌─────────── Layer Links ──────────┐
+│ Intent       Semantic   Execution│
+│   ┌─┐          ┌─┐        ┌─┐   │
+│   │•│──────────►•│────────►•│   │
+│   └─┘          └─┘        └─┘   │
+│                              │   │
+│   ┌─┐          ┌─┐        ┌─┐   │
+│   │•│◄─────────┤•│◄───────┤•│   │
+│   └─┘          └─┘        └─┘   │
+└─────────────────────────────────┘
+```
 
-*   **Basic Verification Display**:
-    ```
-    ┌─────────────────────────────────────────────┐
-    │ Verification Status                         │
-    ├─────────────────────────────────────────────┤
-    │ ✓ Structural Consistency                    │
-    │ ✓ Type Checking                            │
-    │ ! Performance Analysis                      │
-    │                                             │
-    │ [View Details] [Run Additional Checks]      │
-    └─────────────────────────────────────────────┘
-    ```
+#### Relationship Types
+- **Direct References**: Solid lines
+- **Derived References**: Dashed lines
+- **Bidirectional Links**: Double arrows
+- **Impact Relations**: Dotted lines
 
-#### CI/CD Pipeline Integration (v1)
-*   **Verification Dashboard**:
-    ```
-    ┌─────────────────────────────────────────────┐
-    │ Build Status: #1234                         │
-    ├─────────────────────────────────────────────┤
-    │ AI Verification Checks:                     │
-    │ ├── Structure Check     [PASS]             │
-    │ ├── Type Analysis      [PASS]             │
-    │ └── Basic Tests        [RUNNING...]       │
-    │                                             │
-    │ [View Details] [Stop] [Retry Failed]       │
-    └─────────────────────────────────────────────┘
-    ```
+### 3. Detail Levels
 
-#### Debugging Interface (v1)
-*   **Basic Debug View**:
-    ```
-    ┌─────────────────────────────────────────────┐
-    │ Debug Session                               │
-    ├─────────────────────────────────────────────┤
-    │ Intent Context | Variables | Call Stack     │
-    ├─────────────────────────────────────────────┤
-    │ Current Intent:                             │
-    │ > Process user input and validate format    │
-    │                                             │
-    │ Generated Implementation:                   │
-    │ > Step through current execution point      │
-    │                                             │
-    │ [Step] [Continue] [Show AI Analysis]       │
-    └─────────────────────────────────────────────┘
-    ```
+#### Level 1: Overview
+```
+┌─────── Code Overview ──────┐
+│ Intent                     │
+│  └─► Semantic             │
+│       └─► Execution       │
+└─────────────────────────────┘
+```
 
-### Phase 2: Pilot Program (Months 4-9)
+#### Level 2: Layer Focus
+```
+┌─────── Layer Detail ──────┐
+│ [Selected Layer]          │
+│ ┌─────────────────────┐   │
+│ │ Detailed view of    │   │
+│ │ current layer with  │   │
+│ │ primary elements    │   │
+│ └─────────────────────┘   │
+│                           │
+│ [Related Items Preview]   │
+└─────────────────────────────┘
+```
 
-#### IDE Plugin (v2)
-*   **Enhanced Intent Editor**:
-    ```
-    ┌─────────────────────────────────────────────┐
-    │ Intent Workspace                            │
-    ├─────────────────────────────────────────────┤
-    │ [Natural Language]  [Constraints]  [Examples│
-    ├─────────────────────────────────────────────┤
-    │ Intent: [Active Input Area]                 │
-    │ ├── Context: [Module Tree▼]                │
-    │ ├── Constraints: [List View]               │
-    │ └── Examples: [Code Snippets]              │
-    │                                             │
-    │ AI Suggestions: [Real-time Feedback]        │
-    │                                             │
-    │ [Generate] [Refine] [History] [Share]      │
-    └─────────────────────────────────────────────┘
-    ```
+#### Level 3: Full Detail
+```
+┌─────── Full Detail ──────┐
+│ All layers with complete │
+│ relationships, metadata, │
+│ and properties visible   │
+└─────────────────────────────┘
+```
 
-*   **Semantic Version Control**:
-    ```
-    ┌─────────────────────────────────────────────┐
-    │ Version Control                             │
-    ├─────────────────────────────────────────────┤
-    │ Changes in: authentication.anrf             │
-    ├─────────────────────────────────────────────┤
-    │ Intent Changes:                             │
-    │ + Added password validation requirement     │
-    │ * Modified error handling approach          │
-    │                                             │
-    │ Implementation Impact:                      │
-    │ - Security level: IMPROVED                  │
-    │ - Performance: UNCHANGED                    │
-    │ - API Compatibility: MAINTAINED             │
-    │                                             │
-    │ [View Diff] [Compare Intent] [Commit]      │
-    └─────────────────────────────────────────────┘
-    ```
+### 4. Visual Elements
 
-#### Collaboration Tools (v2)
-*   **Code Review Interface**:
-    ```
-    ┌─────────────────────────────────────────────┐
-    │ Code Review: PR #789                        │
-    ├─────────────────────────────────────────────┤
-    │ Intent Changes | Implementation | Validation │
-    ├─────────────────────────────────────────────┤
-    │ ┌─Intent─────┐ ┌─Generated───┐             │
-    │ │           │ │            │             │
-    │ └───────────┘ └────────────┘             │
-    │                                             │
-    │ AI Analysis:                                │
-    │ - Impact on existing functionality          │
-    │ - Potential optimization opportunities      │
-    │ - Verification results                      │
-    │                                             │
-    │ [Comment] [Request Changes] [Approve]       │
-    └─────────────────────────────────────────────┘
-    ```
+#### Node Types
+```
+Intent Nodes:     ╭─────╮
+                 │     │
+                 ╰─────╯
 
-### Phase 3: Targeted Rollout (Months 10-18)
+Semantic Nodes:   ┌─────┐
+                 │     │
+                 └─────┘
 
-#### IDE Plugin (v3)
-*   **Advanced AI Assistance**:
-    ```
-    ┌─────────────────────────────────────────────┐
-    │ AI Assistant Workspace                      │
-    ├─────────────────────────────────────────────┤
-    │ Context | Suggestions | Verification        │
-    ├─────────────────────────────────────────────┤
-    │ Current Context:                            │
-    │ ├── Module: Authentication Service          │
-    │ ├── Intent: Secure Password Reset           │
-    │ └── Constraints: [Security Level: High]     │
-    │                                             │
-    │ AI Suggestions:                             │
-    │ 1. [Add Rate Limiting] 95% confidence       │
-    │ 2. [Enhance Validation] 87% confidence      │
-    │ 3. [Improve Logging] 82% confidence         │
-    │                                             │
-    │ Verification Status:                        │
-    │ ├── Security Checks: PASSED                 │
-    │ ├── Performance: OPTIMIZED                  │
-    │ └── Formal Verification: IN PROGRESS        │
-    │                                             │
-    │ [Apply Selected] [Modify] [Explain]         │
-    └─────────────────────────────────────────────┘
-    ```
+Execution Nodes:  <─────>
+```
 
-#### Debugging Tools (v3)
-*   **Advanced Debug Interface**:
-    ```
-    ┌─────────────────────────────────────────────┐
-    │ Enhanced Debugging                          │
-    ├─────────────────────────────────────────────┤
-    │ Intent | Implementation | Verification      │
-    ├─────────────────────────────────────────────┤
-    │ Execution Path Analysis:                    │
-    │ ┌─Intent─────┐ ┌─Actual Flow─┐            │
-    │ │ Intended   │ │ Current     │            │
-    │ │ Behavior   │ │ Execution   │            │
-    │ └───────────┘ └────────────┘            │
-    │                                             │
-    │ Divergence Detection:                       │
-    │ ! Potential deviation from intent           │
-    │ > AI Analysis of root cause                │
-    │ > Suggested corrections                     │
-    │                                             │
-    │ [Step Intent] [Step Code] [Auto-Correct]   │
-    └─────────────────────────────────────────────┘
-    ```
+#### Edge Types
+```
+Control Flow:     ────►
+Data Flow:        ····►
+Reference:        ━━━━►
+Constraint:       ▬▬▬▬►
+```
 
-### Phase 4: General Availability (Months 19+)
+#### Status Indicators
+```
+┌── Confidence ──┐
+│ ■ High        │
+│ ▤ Medium      │
+│ □ Low         │
+└───────────────┘
 
-#### Mature Developer Experience
-*   **Integrated AI-Native Environment**:
-    ```
-    ┌─────────────────────────────────────────────┐
-    │ AI-Native Development Environment           │
-    ├─────────────────────────────────────────────┤
-    │ Intent | Code | Debug | Verify | Deploy    │
-    ├─────────────────────────────────────────────┤
-    │ Project Context:                            │
-    │ ├── System Overview                         │
-    │ ├── Module Dependencies                     │
-    │ └── Intent Hierarchy                        │
-    │                                             │
-    │ Active Workspace:                           │
-    │ ├── Current Intent                          │
-    │ ├── Implementation Status                   │
-    │ ├── Verification Results                    │
-    │ └── Deployment Readiness                    │
-    │                                             │
-    │ AI Assistant:                               │
-    │ ├── Contextual Suggestions                  │
-    │ ├── Performance Insights                    │
-    │ └── Security Analysis                       │
-    │                                             │
-    │ [Quick Actions] [Documentation] [Settings]  │
-    └─────────────────────────────────────────────┘
-    ```
+┌── Validation ──┐
+│ ✓ Valid       │
+│ ! Warning     │
+│ ✗ Error       │
+└───────────────┘
+```
 
-## Interaction Patterns
+### 5. Interactive Elements
 
-### 1. Intent Specification
-- Natural language input with structured constraints
-- Real-time AI feedback and suggestions
-- Context-aware completion and validation
-- Visual representation of intent hierarchy
+#### Hover Effects
+```
+Normal:    ┌─────┐
+           │Node │
+           └─────┘
 
-### 2. Code Generation Feedback
-- Clear indication of generation confidence
-- Visual diff between intent and implementation
-- Interactive refinement options
-- Immediate verification feedback
+Hover:     ╔═════╗
+           ║Node ║
+           ╚═════╝
+```
 
-### 3. Verification Visualization
-- Multi-level verification status display
-- Clear indication of verification depth
-- Visual representation of formal proofs
-- Interactive exploration of verification results
+#### Selection States
+```
+Unselected: ┌─────┐
+            │Node │
+            └─────┘
 
-### 4. Debugging and Analysis
-- Intent-aware debugging steps
-- Visual correlation between intent and execution
-- Real-time AI analysis of behavior
-- Interactive correction suggestions
+Selected:   █████████
+            █ Node █
+            █████████
+```
 
-### 5. Collaboration Features
-- Shared intent and implementation views
-- Visual representation of changes and impacts
-- Interactive feedback and review tools
-- Team awareness and synchronization
+#### Context Actions
+```
+┌── Node Menu ──┐
+│ ○ Inspect    │
+│ ○ Navigate   │
+│ ○ Edit       │
+│ ○ Validate   │
+└──────────────┘
+```
 
-## Design System
+## Color Scheme
 
-### Colors
-- Primary: #007AFF (Interactive elements)
-- Secondary: #5856D6 (AI-generated content)
-- Success: #34C759 (Verification passed)
-- Warning: #FF9500 (Needs attention)
-- Error: #FF3B30 (Issues/failures)
-- Neutral: #8E8E93 (Secondary information)
+### Layer Colors
+- Intent Layer: #E3F2FD (Light Blue)
+- Semantic Layer: #E8F5E9 (Light Green)
+- Execution Layer: #FFF3E0 (Light Orange)
 
-### Typography
-- Primary: Inter (Clean, modern sans-serif)
-- Monospace: JetBrains Mono (Code display)
-- Scale: 12px/14px/16px/20px/24px
+### Status Colors
+- Success: #4CAF50 (Green)
+- Warning: #FFC107 (Amber)
+- Error: #F44336 (Red)
+- Info: #2196F3 (Blue)
 
-### Icons
-- Consistent icon set for actions
-- Clear status indicators
-- Intuitive metaphors for AI operations
-- Visual hierarchy for importance
+### Confidence Levels
+- High: #00C853 (Strong Green)
+- Medium: #FFD740 (Strong Amber)
+- Low: #FF5252 (Strong Red)
 
-## Accessibility Considerations
-- High contrast mode support
-- Keyboard navigation patterns
-- Screen reader optimization
-- Color-blind friendly palette
-- Scalable text and UI elements
+## Animation Guidelines
+
+### Transitions
+1. Layer switching: Smooth fade (300ms)
+2. Detail expansion: Scale up (200ms)
+3. Relationship highlighting: Fade in (150ms)
+4. Selection response: Quick pulse (100ms)
+
+### Interactive Feedback
+1. Hover highlight: Immediate
+2. Selection confirmation: 100ms flash
+3. Action completion: 200ms fade
+4. Error indication: 300ms shake
+
+## Implementation Notes for Phase 1
+
+### Priority Features
+1. Basic layer visualization
+2. Essential relationship display
+3. Simple navigation controls
+4. Core confidence indicators
+5. Basic validation feedback
+
+### Deferred Features
+1. Advanced animations
+2. Complex relationship types
+3. Historical view comparisons
+4. Custom visualization modes
+
+### Technical Requirements
+1. SVG-based rendering
+2. WebGL for large graphs
+3. CSS Grid for layout
+4. Event-driven updates
+
+## Integration Points
+
+### IDE Plugin Integration
+```typescript
+interface VisualizationAPI {
+  // Layer rendering
+  renderIntentLayer(intent: IntentLayer): void;
+  renderSemanticLayer(semantic: SemanticLayer): void;
+  renderExecutionLayer(execution: ExecutionLayer): void;
+  
+  // Navigation
+  focusNode(nodeId: string): void;
+  highlightRelationships(nodeId: string): void;
+  
+  // Interaction
+  registerNodeClickHandler(handler: (nodeId: string) => void): void;
+  registerHoverHandler(handler: (nodeId: string) => void): void;
+}
+```
+
+### ANRF Parser Integration
+```typescript
+interface ANRFVisualization {
+  // Parsing
+  parseANRF(anrf: ANRFDocument): VisualStructure;
+  
+  // Updates
+  updateVisualization(changes: ANRFChanges): void;
+  
+  // Events
+  onValidationResult(result: ValidationResult): void;
+  onConfidenceUpdate(score: ConfidenceScore): void;
+}
+```
 
 ## Change Log
-- 2025-04-07: Added phased UI/UX designs aligned with Tooling Implementation Plan
-- 2025-04-05: Initial visualization framework created
+- 2025-04-07: Created Phase 1 visualization framework specification
