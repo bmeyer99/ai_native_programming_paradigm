@@ -1,74 +1,119 @@
-# AI Model Architecture
+# AI Model Architecture and Capability Roadmap
 
-## 1. Overview
+## Overview
+This document outlines the architecture of the AI systems supporting the AI-Native Programming Paradigm and the phased roadmap for developing these capabilities, aligned with the overall technical implementation plan (`system-architecture.md`) and adoption strategy (`adoption-strategy.md`).
 
-This document outlines the architecture of the AI systems responsible for code generation, confidence scoring, verification assistance, and explanation within the AI-Native Programming Paradigm.
+## Core AI Services and Models
+1.  **Intent Analysis Service**:
+    *   Models: Natural Language Understanding (NLU) models (e.g., Transformers like BERT/GPT variants), Knowledge Graph embedding models, Constraint Solvers.
+    *   Function: Translate diverse developer inputs (NL, specs, examples) into a structured representation suitable for code generation, resolving ambiguities and validating constraints.
+2.  **Generation Service**:
+    *   Models: Large Language Models (LLMs) fine-tuned for code generation (ANRF), potentially Graph Neural Networks (GNNs) for structural aspects, Reinforcement Learning (RL) agents for optimization during generation.
+    *   Function: Generate ANRF instances from structured intent, incorporating constraints, context, and optimization goals. Provide confidence scores (using Conformal Prediction).
+3.  **Verification Service (AI Components)**:
+    *   Models: Anomaly detection models, pattern matching models (e.g., GNNs), sequence models for property checking, potentially models interfacing with formal methods tools (e.g., Z3).
+    *   Function: Perform AI-driven checks (structural consistency, type checking, anti-pattern detection, semantic equivalence heuristics), provide evidence for findings, assist formal verification.
+4.  **Optimization Service (AI Components)**:
+    *   Models: RL agents, search algorithms guided by learned heuristics, models predicting performance impact of optimizations.
+    *   Function: Suggest or apply optimization patterns to ANRF, guided by performance goals and learned strategies.
+5.  **Viewing Service (AI Components)**:
+    *   Models: Sequence-to-sequence models (ANRF -> Code/NL), summarization models.
+    *   Function: Assist in translating ANRF to human-readable formats, generate explanations, summarize code sections.
+6.  **Feedback Integration**:
+    *   Models: Models for classifying feedback, RL agents learning from preferences, active learning components.
+    *   Function: Process developer feedback to fine-tune models, update preferences, and improve overall system performance (part of MLOps).
 
-## 2. Core AI Services
+## Phased AI Capability Roadmap
 
-### 2.1. AI Generation Service
-*(Details TBD)*
+### Phase 1: Internal Dogfooding (Months 1-3) - Focus: Foundational Capabilities
+*   **AI Goals**: Establish baseline functionality for core workflow.
+*   **Intent Analysis (v1)**:
+    *   Model: Fine-tuned BERT/DistilBERT for keyword extraction and basic intent classification. Rule-based constraint parsing.
+    *   Data: Internal code documentation, basic requirement specifications.
+    *   Targets: >70% accuracy on core intent types.
+*   **Generation (v1)**:
+    *   Model: Fine-tuned Code-Llama/StarCoder variant on ANRF examples. Basic Conformal Prediction implementation for sequence-level confidence.
+    *   Data: Synthetic ANRF examples, small internal codebase translated to ANRF.
+    *   Targets: Generate structurally valid ANRF for simple functions/modules. Meaningful (if basic) confidence scores.
+*   **Verification (v1 - AI Checkers)**:
+    *   Model: Rule-based structural consistency checks. Basic type checker operating on ANRF metadata.
+    *   Data: ANRF specifications.
+    *   Targets: Detect basic structural/type errors.
+*   **Viewing (v1 - AI Assist)**:
+    *   Model: Simple template-based ANRF to pseudocode translation.
+    *   Data: ANRF specifications.
+    *   Targets: Basic readability of generated ANRF.
+*   **MLOps (v1)**:
+    *   Infrastructure: Manual model deployment (e.g., scripts pushing to S3/container registry). Basic logging of service inputs/outputs. Manual feedback collection (e.g., shared doc).
+    *   Process: Initial model training offline. Manual review of logs and feedback.
+*   **Dependencies**: Core ANRF specification (Language Designer), basic infrastructure setup (Sys Architect), initial training datasets.
 
-### 2.2. AI Confidence Scoring Service (Phase 1 MVP Design)
+### Phase 2: Pilot Program (Months 4-9) - Focus: Workflow Validation & Enhanced Reliability
+*   **AI Goals**: Improve model accuracy, integrate feedback, support core workflows reliably.
+*   **Intent Analysis (v2)**:
+    *   Model: Transformer model with improved ambiguity resolution (e.g., using attention mechanisms, knowledge graph integration). Constraint solver integration (e.g., Z3py) for validation.
+    *   Data: Pilot project requirements, expanded internal codebases, feedback data from Phase 1.
+    *   Targets: >80% accuracy on intent types, handle simple constraint sets.
+*   **Generation (v2)**:
+    *   Model: Improved LLM fine-tuning with RLHF (Reinforcement Learning from Human Feedback). More granular Conformal Prediction (e.g., token-level). Generation of multiple options.
+    *   Data: Feedback data (accepted/rejected generations), pilot project code translated to ANRF.
+    *   Targets: Higher generation quality, more reliable confidence scores, support for moderately complex modules.
+*   **Verification (v2 - AI Checkers)**:
+    *   Model: GNNs for anti-pattern detection. Heuristic semantic equivalence checks (e.g., embedding similarity). Tiered verification results (Generated -> AI Checked).
+    *   Data: Known good/bad patterns, verified ANRF pairs.
+    *   Targets: Detect common anti-patterns, provide heuristic equivalence assessment.
+*   **Optimization (v1 - AI Assist)**:
+    *   Model: Rule-based system suggesting basic optimizations based on static analysis of ANRF.
+    *   Data: Basic optimization rules.
+    *   Targets: Suggest simple, safe optimizations.
+*   **Viewing (v2 - AI Assist)**:
+    *   Model: Sequence-to-sequence model for ANRF -> target language translation (e.g., Python). Support for multiple abstraction levels based on metadata.
+    *   Data: Parallel ANRF-Code corpus.
+    *   Targets: Generate readable code in one target language, support basic abstraction switching.
+*   **MLOps (v1 - Automated)**:
+    *   Infrastructure: Integration with AI Model Registry (MLflow). Basic CI/CD pipeline for model training/deployment (Kubeflow Pipelines/Jenkins). Centralized feedback database.
+    *   Process: Automated retraining triggers based on feedback volume/schedule. Basic performance monitoring dashboards (Grafana).
+*   **Dependencies**: Refined ANRF spec, MLOps v1 infrastructure (Sys Architect), feedback mechanisms (DX Designer), pilot project data.
 
-*   **Objective:** Provide reliable, explainable, and computationally efficient confidence scores for AI-generated code components.
-*   **Phase 1 Models:**
-    1.  **Calibrated Softmax Probability:**
-        *   **Technique:** Apply temperature scaling or isotonic regression to the output probabilities of the code generation model to improve calibration.
-        *   **Input:** Generated code representation (ANRF), potentially generation context.
-        *   **Output:** Calibrated probability score (0.0 - 1.0).
-        *   **Metadata Written:**
-            *   `confidence_score`: Calibrated probability value.
-            *   `confidence_type`: "calibrated_probability".
-            *   `confidence_rationale`: "Confidence based on calibrated output probability distribution of the generation model."
-        *   **Considerations:** Requires a held-out calibration dataset. Relatively lightweight computation post-generation. Provides a measure of *aleatoric* uncertainty (inherent randomness).
-    2.  **Simple Out-of-Distribution (OOD) Heuristic:**
-        *   **Technique:** Thresholding on the maximum calibrated softmax probability (MSP). Inputs with max probability below a certain threshold are flagged as potentially OOD. Alternatively, Mahalanobis distance on penultimate layer embeddings if available and efficient.
-        *   **Input:** Calibrated softmax probability (from Model 1) or embeddings.
-        *   **Output:** Binary OOD flag (True/False) or a heuristic OOD score.
-        *   **Metadata Written (if OOD detected):**
-            *   `confidence_score_adjustment`: Negative adjustment factor or flag.
-            *   `confidence_flags`: ["potential_ood"].
-            *   `confidence_rationale_addendum`: "Input characteristics may differ from typical training data."
-        *   **Considerations:** Very lightweight. Provides a basic measure of *epistemic* uncertainty (model ignorance). Threshold needs careful tuning. Less robust than dedicated OOD models but suitable for MVP.
-*   **Integration:**
-    *   Receives requests from the IDE Integration Layer/Gateway or directly from the AI Generation Service post-generation.
-    *   Reads generated code representation (ANRF) and potentially context metadata.
-    *   Writes confidence metadata fields back to the ANRF via the Metadata Store API.
-    *   **Metadata Update Notification:** Upon successful write to the Metadata Store, the AI Service (or the Metadata Store itself, if capable) will publish an event (e.g., to a shared event bus like Kafka/Redis PubSub) containing the ANRF reference and updated metadata keys. The IDE Integration Layer/Gateway subscribes to these events to receive notifications. A fallback polling mechanism on the Gateway may be implemented for resilience.
-    *   **Gateway Caching:** Acknowledges that the IDE Integration Layer/Gateway will likely implement caching for confidence scores to optimize performance and reduce load on the Metadata Store. The event-driven notification mechanism facilitates cache invalidation.
-*   **API:**
-    *   Exposes an asynchronous endpoint (e.g., `POST /confidence { "anrf_reference": "..." }`).
-    *   Returns immediately with a `202 Accepted` status and a task ID.
-    *   Actual results (metadata updates) are delivered via the asynchronous notification mechanism.
-*   **Error Handling:**
-    *   **Input Errors:** Invalid ANRF reference, missing context -> Return `4xx` error immediately.
-    *   **Model Inference Errors:** Internal model failure -> Log error, potentially notify monitoring system, may not update metadata or could write an error flag.
-    *   **Metadata Store Write Errors:** Failure to write metadata -> Implement retry logic (e.g., exponential backoff). If retries fail, log error and potentially notify monitoring/alerting system. The Gateway should handle the lack of an update notification gracefully (e.g., timeout).
-    *   **Notification Errors:** Failure to publish update event -> Log error, rely on Gateway's potential polling fallback or timeout mechanisms.
-*   **Performance:** Designed for low latency (< 500ms target for Phase 1 P95 for model inference + metadata write) to support real-time feedback loops. Minimal resource consumption is critical.
-*   **Future Enhancements (Phase 2+):** MC Dropout, Deep Ensembles, Conformal Prediction, more sophisticated OOD detection. The architecture (service endpoint, metadata fields, event-driven updates) allows adding new confidence types transparently.
+### Phase 3: Targeted Rollout (Months 10-18) - Focus: Scalability, Advanced Features & Domain Adaptation
+*   **AI Goals**: Handle complex scenarios, integrate formal methods, scale reliably.
+*   **Intent Analysis (v3)**:
+    *   Model: Domain adaptation techniques (e.g., fine-tuning on domain-specific data). Handling complex, multi-part intents.
+    *   Data: Data from diverse projects in targeted rollout, domain-specific corpora.
+    *   Targets: High accuracy across multiple domains, handle complex constraints.
+*   **Generation (v3)**:
+    *   Model: Scalable generation architectures (e.g., mixture-of-experts). Advanced Conformal Prediction methods. Context-aware generation leveraging broader project context.
+    *   Data: Large-scale codebase data, diverse feedback.
+    *   Targets: Generate complex systems, highly accurate confidence scores, contextually relevant suggestions.
+*   **Verification (v3 - Formal Methods Assist)**:
+    *   Model: AI models suggesting properties/invariants for formal verification tools. Models translating verification results into human-understandable explanations. Interface with tools like Z3/Coq.
+    *   Data: Formally verified code examples, verification proofs.
+    *   Targets: Assist developers in using formal verification, explain complex results.
+*   **Optimization (v2 - Automated)**:
+    *   Model: RL agents learning optimization strategies. Models predicting performance impact. Adaptive optimization based on context.
+    *   Data: Performance benchmarks, profiling data, successful optimization sequences.
+    *   Targets: Apply effective, context-aware optimizations automatically or semi-automatically.
+*   **Viewing (v3 - AI Assist)**:
+    *   Model: Advanced explanation generation (linking ANRF to intent). Customizable view generation. Diagram generation support (e.g., ANRF -> PlantUML).
+    *   Data: Intent-ANRF-Code traces, explanation examples.
+    *   Targets: Provide deep explanations, support diverse visualizations.
+*   **MLOps (v2)**:
+    *   Infrastructure: Automated retraining pipelines with A/B testing. Advanced model monitoring (drift detection, bias detection). Scalable data processing for feedback.
+    *   Process: Continuous improvement cycles driven by feedback and monitoring. Shadow deployments for new models.
+*   **Dependencies**: Scalable infrastructure (Sys Architect), formal verification tool integration (Tool Engineer), large datasets from rollout.
 
-### 2.3. AI Verification Assistance Service
-*(Details TBD - Phase 2 onwards)*
+### Phase 4: General Availability (Months 19+) - Focus: Maturity, Ecosystem & Specialization
+*   **AI Goals**: Robustness, extensibility, specialized capabilities.
+*   **Intent Analysis (v4+)**: Focus on robustness, handling edge cases, improved conversational clarification. Potential for highly specialized domain models.
+*   **Generation (v4+)**: Focus on fine-grained control, security hardening (preventing generation of vulnerable patterns), optimizing for diverse hardware targets.
+*   **Verification (v4+)**: Focus on comprehensive property checking, integration with security scanning tools, explainability of verification failures.
+*   **Optimization (v3+)**: Focus on multi-objective optimization (performance, energy, cost), learning from global ecosystem data (privacy-preserving).
+*   **Viewing (v4+)**: Focus on interactive exploration, comparative views, integration with debugging tools.
+*   **MLOps (v3)**:
+    *   Infrastructure: Mature, highly automated MLOps platform. Federated learning capabilities (optional). Robust governance and auditing.
+    *   Process: Sophisticated model lifecycle management. Continuous monitoring and adaptation. Potential for user-specific model personalization.
+*   **Dependencies**: Stable core platform, mature ecosystem tools, large-scale usage data, community contributions.
 
-### 2.4. AI Explanation Service
-*(Details TBD)*
-
-## 3. Training & Evaluation
-
-### 3.1. Confidence Model Training (Phase 1)
-*   **Calibration Data:** Requires a labeled dataset (generated code + correctness/quality label) separate from the main generation model training set.
-*   **OOD Threshold Tuning:** Requires analysis of probability distributions on validation data and potentially a small set of known OOD examples.
-*   **Metrics:**
-    *   Expected Calibration Error (ECE) for calibrated probabilities.
-    *   AUC-ROC or FPR@95TPR for OOD detection performance.
-    *   Correlation analysis between confidence scores and downstream bug/quality metrics (long-term evaluation).
-
-*(Further details on training infrastructure and datasets in `training-requirements.md`)*
-
-## 4. Security & Safety
-*(Refer to `ai-security-framework.md`)*
-
-## 5. Integration Framework
-*(Refer to `system-architecture.md` and `integration-interfaces.md`)*
+## Change Log
+- 2025-04-07: Initial AI Capability Roadmap created, aligned with phased technical implementation plan.
+- 2025-04-05: Previous version focused on high-level AI capability framework.
