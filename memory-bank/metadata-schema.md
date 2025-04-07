@@ -1,289 +1,301 @@
-# Metadata Schema for AI-Native Representation Format
+# AI-Native Representation Format (ANRF) Metadata Schema - v1
 
 ## Overview
+This document provides a detailed specification of the metadata schema for the AI-Native Representation Format (ANRF). The metadata schema defines how semantic information is preserved alongside optimized code, enabling AI understanding, human-readable translation, and formal verification.
 
-The metadata schema defines how semantic information is preserved alongside optimized code in the AI-Native Representation Format (ANRF). This schema is crucial for maintaining the connection between human intent and machine-optimized code, enabling both efficient execution and human understanding.
+## Core Metadata Principles
+- **Comprehensive**: Captures all necessary semantic information
+- **Structured**: Organized in a well-defined hierarchy
+- **Linked**: Maintains bidirectional references between layers
+- **Extensible**: Allows for future additions without breaking compatibility
+- **Queryable**: Supports efficient retrieval and analysis
 
-## Core Principles
+## Metadata Organization
 
-1. **Bidirectional Linkage**: Metadata must maintain bidirectional references between intent, semantics, and execution
-2. **Semantic Preservation**: Metadata must capture sufficient information to preserve meaning across transformations
-3. **Extensibility**: The schema must be extensible to accommodate new types of metadata
-4. **Efficiency**: Metadata storage and access must be efficient to minimize runtime overhead
-5. **Verifiability**: Metadata must support formal verification of semantic preservation
-
-## Metadata Categories
-
-The metadata schema is organized into four main categories:
-
-### 1. Structural Metadata
-
-Structural metadata describes the organization and structure of the code:
-
-- **Entity Definitions**: Descriptions of program entities (variables, functions, types, etc.)
-- **Dependency Relationships**: Relationships between entities (uses, contains, extends, etc.)
-- **Scope Information**: Lexical and dynamic scoping information
-- **Control Flow**: Control flow relationships and constraints
-
-### 2. Semantic Metadata
-
-Semantic metadata captures the meaning and behavior of the code:
-
-- **Type Information**: Detailed type specifications beyond what's needed for execution
-- **Behavioral Contracts**: Pre/post-conditions, invariants, and other behavioral specifications
-- **Effect Annotations**: Side effects, purity, and other computational effect information
-- **Semantic Tags**: Domain-specific semantic annotations
-
-### 3. Intent Metadata
-
-Intent metadata preserves the human design decisions and rationale:
-
-- **Purpose Annotations**: Why a particular component exists
-- **Design Rationale**: Why specific implementation choices were made
-- **Constraints**: Business rules, performance requirements, and other constraints
-- **Natural Language Descriptions**: Human-readable explanations
-
-### 4. Provenance Metadata
-
-Provenance metadata tracks the history and origin of the code:
-
-- **Source Mappings**: Links to original source code
-- **Transformation History**: Record of applied transformations
-- **Authorship Information**: Who created or modified the code
-- **Version Information**: Version and timestamp data
-- **Verification Metadata**: Confidence scores and verification status information
-
-## Schema Structure
-
-Each metadata category is structured as a hierarchical schema:
+The ANRF metadata is organized into three primary layers, each with its own schema:
 
 ```
-Metadata
-├── Structural
-│   ├── Entities
-│   │   ├── Variables
-│   │   ├── Functions
-│   │   ├── Types
-│   │   └── ...
-│   ├── Dependencies
-│   ├── Scopes
-│   └── ControlFlow
-├── Semantic
-│   ├── Types
-│   ├── Contracts
-│   ├── Effects
-│   └── SemanticTags
-├── Intent
-│   ├── Purpose
-│   ├── Rationale
-│   ├── Constraints
-│   └── Descriptions
-└── Provenance
-    ├── SourceMappings
-    ├── TransformationHistory
-    ├── Authorship
-    ├── VersionInfo
-    └── VerificationMetadata
-        ├── ConfidenceScores
-        │   ├── GenerationScores
-        │   ├── OptimizationScores
-        │   └── ExplanationScores
-        ├── VerificationStatus
-        └── VerificationHistory
+┌─────────────────────────────────┐
+│           Intent Layer          │
+│  (High-level intent and design) │
+├─────────────────────────────────┤
+│         Semantic Layer          │
+│ (Relationships and constraints) │
+├─────────────────────────────────┤
+│        Execution Layer          │
+│    (Optimized execution code)   │
+└─────────────────────────────────┘
 ```
 
-## Metadata Representation
+## 1. Intent Layer Metadata
 
-Metadata is represented using a combination of:
+The Intent Layer captures the high-level purpose, requirements, and design decisions that drove the code generation.
 
-1. **Structured Records**: JSON-like structures for most metadata
-2. **Semantic Graphs**: Graph representations for relationship metadata
-3. **Formal Specifications**: Machine-readable formal specifications for contracts and invariants
-4. **Natural Language**: Embedded natural language descriptions with semantic annotations
+### 1.1 Core Intent Metadata
 
-### Example Metadata Record
+| Field | Type | Description | Required |
+|-------|------|-------------|----------|
+| `intent_type` | string | Type of intent (function, class, module, etc.) | Yes |
+| `description` | string | Natural language description of intent | Yes |
+| `constraints` | array | Explicit constraints on implementation | No |
+| `tags` | array | Categorization and search tags | No |
+| `properties` | map | Additional key-value properties | No |
+
+### 1.2 Constraint Types
+
+| Constraint Type | Description | Example |
+|-----------------|-------------|---------|
+| `performance` | Performance requirements | "Linear time complexity O(n)" |
+| `security` | Security requirements | "Input validation required" |
+| `compatibility` | Compatibility requirements | "Must work with Python 3.9+" |
+| `reliability` | Reliability requirements | "Must handle network failures" |
+| `resource` | Resource usage constraints | "Memory usage under 100MB" |
+
+### 1.3 Intent Properties
+
+Common properties that may appear in the `properties` map:
+
+| Property | Description | Example |
+|----------|-------------|---------|
+| `author` | Author of the intent | "AI" or "Human" |
+| `created_at` | Creation timestamp | "2025-04-07T01:00:00Z" |
+| `priority` | Implementation priority | "high" |
+| `domain` | Application domain | "finance" |
+| `rationale` | Reasoning behind intent | "Needed for efficient data processing" |
+
+## 2. Semantic Layer Metadata
+
+The Semantic Layer maps between intent and execution, containing relationships, types, and constraints.
+
+### 2.1 Node Types
+
+| Node Type | Description | Properties |
+|-----------|-------------|------------|
+| `function` | Function definition | name, return_type, visibility |
+| `parameter` | Function parameter | name, type, default_value |
+| `variable` | Variable declaration | name, type, scope, mutability |
+| `expression` | Expression node | expression_type, result_type |
+| `control_flow` | Control flow construct | flow_type (if, loop, etc.) |
+| `type_def` | Type definition | name, kind, fields |
+| `module` | Module or namespace | name, imports |
+| `class` | Class definition | name, parent_classes, members |
+
+### 2.2 Edge Types
+
+| Edge Type | Description | Properties |
+|-----------|-------------|------------|
+| `calls` | Function call relationship | arguments, return_handling |
+| `contains` | Containment relationship | visibility |
+| `depends_on` | Dependency relationship | dependency_type |
+| `inherits` | Inheritance relationship | override_behavior |
+| `references` | Reference to another node | reference_type |
+| `defines` | Definition relationship | scope |
+| `has_parameter` | Function-parameter relationship | position, optional |
+| `has_member` | Class-member relationship | access_level |
+
+### 2.3 Type System
+
+The type system in the Semantic Layer supports:
+
+| Type Kind | Description | Example |
+|-----------|-------------|---------|
+| `primitive` | Primitive types | int, float, bool, string |
+| `array` | Array/list types | int[], string[] |
+| `struct` | Composite structure | Person{name, age} |
+| `function` | Function types | (int, int) -> int |
+| `union` | Union types | int \| string |
+| `generic` | Generic types | List<T> |
+| `reference` | Reference types | &Person |
+| `nullable` | Nullable types | int? |
+
+### 2.4 Symbol Table
+
+The symbol table maps identifiers to nodes in the semantic graph:
 
 ```json
-{
-  "id": "func:calculate_total",
-  "type": "Function",
-  "structural": {
-    "signature": {
-      "parameters": [{"name": "items", "type": "Array<Item>"}],
-      "returnType": "Number",
-      "effects": ["reads:items", "pure"]
-    },
-    "dependencies": ["type:Item", "func:apply_discount"]
-  },
-  "semantic": {
-    "contract": {
-      "preconditions": ["items.length > 0", "items.every(i => i.price >= 0)"],
-      "postconditions": ["return >= 0"]
-    },
-    "effects": {
-      "purity": "pure",
-      "determinism": "deterministic",
-      "complexity": "O(n)"
+"symbol_table": {
+  "sum": "func_sum",
+  "numbers": "param_numbers",
+  "result": "var_result"
+}
+```
+
+## 3. Execution Layer Metadata
+
+The Execution Layer contains the optimized code ready for execution, focusing on performance.
+
+### 3.1 Execution Formats
+
+| Format | Description | Use Cases |
+|--------|-------------|-----------|
+| `graph` | Computation graph | Data flow, parallel operations |
+| `bytecode` | Virtual machine bytecode | Sequential execution |
+| `ir` | Intermediate representation | Compiler optimization |
+| `native` | Native machine code | Direct execution |
+| `ast` | Abstract syntax tree | Source-level operations |
+
+### 3.2 Execution Node Types
+
+For graph-based execution representation:
+
+| Operation | Description | Properties |
+|-----------|-------------|------------|
+| `function_def` | Function definition | name, signature |
+| `parameter` | Parameter node | name, position |
+| `variable_def` | Variable definition | name, initial_value |
+| `constant` | Constant value | value, type |
+| `arithmetic` | Arithmetic operation | operator (+, -, *, /) |
+| `comparison` | Comparison operation | operator (==, !=, <, >) |
+| `logical` | Logical operation | operator (and, or, not) |
+| `control` | Control flow | type (if, switch, loop) |
+| `memory` | Memory operation | type (load, store, allocate) |
+| `call` | Function call | target, arguments |
+| `return` | Return statement | value |
+
+### 3.3 Execution Edge Types
+
+| Edge Type | Description | Properties |
+|-----------|-------------|------------|
+| `control_flow` | Control flow edge | condition |
+| `data_flow` | Data flow edge | data_type |
+| `loop_body` | Loop body connection | iterator |
+| `exception` | Exception handling | exception_type |
+
+### 3.4 Execution Properties
+
+Common properties that may appear in the execution layer:
+
+| Property | Description | Example |
+|----------|-------------|---------|
+| `complexity` | Computational complexity | "O(n)" |
+| `memory_usage` | Memory usage estimate | "O(n)" |
+| `parallelizable` | Whether execution can be parallelized | true/false |
+| `side_effects` | Whether operation has side effects | true/false |
+| `optimization_level` | Level of optimization applied | "high" |
+
+## 4. Cross-Layer References
+
+References between layers are maintained through IDs:
+
+### 4.1 Intent to Semantic References
+
+Intent elements can reference semantic nodes to indicate which parts of the semantic graph fulfill specific intent aspects:
+
+```json
+"intent": {
+  "constraints": [
+    {
+      "type": "performance",
+      "description": "Linear time complexity O(n)",
+      "semantic_refs": ["node_loop", "node_operation"]
     }
-  },
-  "intent": {
-    "purpose": "Calculate the total price of all items including applicable discounts",
-    "rationale": "Uses a loop instead of reduce for better performance with large arrays",
-    "constraints": ["Must handle empty arrays", "Must be O(n) or better"]
-  },
-  "provenance": {
-    "source": {"file": "shopping.js", "line": 42},
-    "transformations": [
-      {"type": "loop_unrolling", "timestamp": "2025-04-01T10:30:00Z"},
-      {"type": "constant_folding", "timestamp": "2025-04-01T10:30:01Z"}
-    ],
-    "author": "AI:GPT-5",
-    "version": "1.0.0"
-  }
+  ]
 }
 ```
 
-### Example Confidence Score Metadata Record
+### 4.2 Semantic to Execution References
+
+Semantic nodes reference execution elements to link semantic concepts to their implementation:
 
 ```json
-{
-  "id": "conf:func:calculate_total:gen:20250406T195200Z",
-  "target": "anrf:semantic/function/calculate_total/func123",
-  "timestamp": "2025-04-06T19:52:00Z",
-  "score": {
-    "numerical": 0.95,
-    "categorical": "High",
-    "type": "Conformal Coverage",
-    "uncertaintyType": "Epistemic",
-    "rationale": "Based on 95% confidence interval from conformal prediction"
-  },
-  "details": {
-    "technique": "ConformalPrediction",
-    "parameters": {
-      "calibrationSize": 1000,
-      "alpha": 0.05
-    },
-    "contributingFactors": [
-      {
-        "factor": "SimilarTrainingExamples",
-        "weight": 0.7,
-        "description": "High similarity to 42 training examples"
-      },
-      {
-        "factor": "ModelConsensus",
-        "weight": 0.3,
-        "description": "8/10 models agree on this output"
-      }
-    ]
-  },
-  "thresholds": {
-    "verification": 0.8,
-    "humanReview": 0.6
-  },
-  "actions": {
-    "triggered": ["AutomatedVerification"],
-    "recommended": ["FormalProofGeneration"]
-  },
-  "metadata": {
-    "modelId": "AI-Integration-Service-v1.0",
-    "version": "1.0.0"
-  }
+"semantic": {
+  "nodes": [
+    {
+      "node_id": "func_sum",
+      "node_type": "function",
+      "execution_refs": ["exec_node_1"]
+    }
+  ]
 }
 ```
 
-## Cross-Layer References
+### 4.3 Execution to Semantic References
 
-Metadata includes references that link elements across the three layers of ANRF:
+Execution elements can reference semantic nodes through properties:
 
-### Reference Types
-
-1. **Identity References**: Direct one-to-one mappings between elements
-2. **Compositional References**: One-to-many or many-to-one mappings
-3. **Semantic References**: References based on semantic equivalence rather than structural identity
-4. **Constraint References**: References that enforce invariants across layers
-
-### Reference Format
-
-References are represented as URIs with a custom scheme:
-
-```
-anrf:[layer]/[category]/[type]/[identifier]
+```json
+"execution": {
+  "nodes": [
+    {
+      "node_id": "exec_node_1",
+      "properties": {
+        "semantic_ref": "func_sum"
+      }
+    }
+  ]
+}
 ```
 
-Examples:
-- `anrf:execution/instruction/add/inst123`: References an add instruction in the execution layer
-- `anrf:semantic/type/number/type456`: References a number type in the semantic layer
-- `anrf:intent/purpose/calculate_total/func789`: References the purpose of a function in the intent layer
+## 5. Metadata Processing
 
-## Storage and Indexing
+### 5.1 Querying Patterns
 
-Metadata is stored using an efficient indexing scheme:
+Common query patterns for ANRF metadata:
 
-1. **Primary Index**: By unique identifier
-2. **Secondary Indices**:
-   - By reference (for quick lookup of related elements)
-   - By type (for filtering by metadata type)
-   - By layer (for layer-specific operations)
-3. **Full-text Index**: For natural language descriptions
+1. **Intent-based queries**: Find implementation of specific intent
+2. **Semantic structure queries**: Analyze dependencies, call graphs
+3. **Type-based queries**: Find all usages of a type
+4. **Cross-layer queries**: Trace from intent to execution
 
-## Metadata Evolution
+### 5.2 Metadata Validation
 
-The metadata schema supports evolution through:
+Validation rules for ANRF metadata:
 
-1. **Schema Versioning**: Explicit versioning of the schema
-2. **Extension Points**: Designated points for schema extensions
-3. **Compatibility Layers**: Mechanisms for handling schema changes
-4. **Migration Tools**: Tools for migrating metadata between schema versions
+1. **Structural validation**: Schema conformance
+2. **Reference validation**: All references must be valid
+3. **Semantic validation**: Type consistency, graph properties
+4. **Cross-layer validation**: Layer coverage and consistency
 
-## Metadata Access API
+### 5.3 Metadata Generation
 
-The metadata schema defines a standard API for accessing and manipulating metadata:
+Guidelines for generating metadata:
 
-1. **Query Operations**:
-   - `getMetadata(id)`: Retrieve metadata by ID
-   - `queryMetadata(filter)`: Query metadata using a filter expression
-   - `traverseReferences(id, direction)`: Traverse references from/to an element
-2. **Modification Operations**:
-   - `addMetadata(element)`: Add new metadata
-   - `updateMetadata(id, updates)`: Update existing metadata
-   - `deleteMetadata(id)`: Delete metadata
-3. **Verification Operations**:
-   - `verifyConsistency()`: Verify internal consistency of metadata
-   - `verifyReferences()`: Verify that all references are valid
-   - `verifyConstraints()`: Verify that all constraints are satisfied
-   - `getConfidenceScore(id)`: Retrieve confidence score for a component
-   - `queryConfidenceScores(filter)`: Query confidence scores using filters
-   - `updateVerificationStatus(id, status)`: Update verification status
+1. Start with intent description
+2. Build semantic graph based on intent
+3. Generate execution representation
+4. Establish cross-layer references
+5. Validate the complete metadata
 
-## Metadata Serialization
+## 6. Metadata Evolution
 
-Metadata is serialized using a compact binary format for storage and a JSON-based format for interchange:
+The metadata schema is designed to evolve over time:
 
-1. **Binary Format**:
-   - Compact representation for storage
-   - Indexed for efficient access
-   - Includes compression for large metadata
-2. **Interchange Format**:
-   - JSON-based for interoperability
-   - Includes schema information
-   - Supports partial serialization for incremental updates
+### 6.1 Versioning
 
-## Security Considerations
+- Format version: Tracked in the root `version` field
+- Schema version: May be tracked separately for each layer
 
-The metadata schema includes security features:
+### 6.2 Extension Mechanisms
 
-1. **Integrity Protection**: Cryptographic signatures to detect tampering
-2. **Access Control**: Metadata-level access control for sensitive information
-3. **Privacy Annotations**: Annotations for privacy-sensitive metadata
-4. **Provenance Tracking**: Secure tracking of metadata modifications
+- New fields can be added to existing structures
+- New node/edge types can be added
+- New properties can be added to existing types
+- Custom extensions can be added in properties maps
 
-## Integration with Formal Verification
+### 6.3 Backward Compatibility
 
-The metadata schema is designed to support formal verification:
+- Required fields must always be present
+- Removed fields should be deprecated before removal
+- Version-specific processing may be required
 
-1. **Verification Conditions**: Metadata includes verification conditions for formal proofs
-2. **Invariant Specifications**: Formal specifications of invariants that must be preserved
-3. **Proof Hints**: Hints for automated theorem provers
-4. **Verification Status**: Tracking of verification status for different properties
-5. **Confidence Scores**: Confidence scores for AI-generated or AI-transformed code
-6. **Verification Thresholds**: Thresholds for triggering verification based on confidence scores
+## 7. Implementation Guidelines for Phase 1
+
+### 7.1 Metadata Storage
+
+- Store as part of ANRF file (Protocol Buffers or JSON)
+- Index key metadata fields for efficient retrieval
+
+### 7.2 Processing Libraries
+
+- Develop Python library for metadata manipulation
+- Implement validation functions
+- Create helper functions for common queries
+
+### 7.3 Integration with AI Models
+
+- Extract features from metadata for AI training
+- Generate metadata as part of AI output
+- Validate AI-generated metadata
+
+## Change Log
+- 2025-04-07: Created detailed metadata schema specification for ANRF v1

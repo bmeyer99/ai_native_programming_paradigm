@@ -1,287 +1,271 @@
-# Interaction Model for AI-Native Programming Tools
+# AI-Native Programming Paradigm Interaction Model - Phase 1
 
-## Overview
-This document defines the interaction patterns and workflows for the AI-Native Programming tools across implementation phases. It specifies how developers will interact with AI capabilities, manage code generation, provide feedback, and maintain control over the development process.
+This document defines the interaction model for Phase 1 (Internal Dogfooding) of the AI-Native Programming Paradigm, specifying how developers interact with the AI and optimized code through the IDE plugin.
 
 ## Core Interaction Principles
 
-### 1. Progressive Agency
-- Start with simple, guided interactions
-- Gradually expose more complex capabilities
-- Allow increasing developer control
-- Build confidence through successful interactions
+1. **Layer-Centric Navigation**: Organize interactions around the three-layer ANRF architecture
+2. **Progressive Disclosure**: Reveal complexity gradually as needed
+3. **Bidirectional Control**: Enable both AI-driven and developer-driven workflows
+4. **Visual Consistency**: Maintain clear visual language across all interactions
+5. **Immediate Feedback**: Provide real-time validation and confidence information
 
-### 2. Predictable AI Collaboration
-- Clear indication of AI capabilities and limitations
-- Consistent patterns for AI interaction
-- Predictable responses to developer input
-- Transparent AI decision-making process
+## IDE Plugin Layout
 
-### 3. Maintained Developer Control
-- Explicit approval for significant changes
-- Clear override mechanisms
-- Granular control over AI behavior
-- Easy modification of AI suggestions
+```
+┌─────────────────────────────────────────────┐
+│ Command Bar                                 │
+│ [Intent Input] [Generate] [Validate] [View] │
+├─────────────────────────────────────────────┤
+│ ┌─────────────┐ ┌─────────────┐            │
+│ │   Intent    │ │  Preview    │            │
+│ │   Editor    │ │   Panel     │            │
+│ │             │ │             │            │
+│ └─────────────┘ └─────────────┘            │
+├─────────────────────────────────────────────┤
+│ ┌─────────────────────────────────────────┐ │
+│ │            Layer Explorer               │ │
+│ │ [Intent] [Semantic] [Execution] [Links] │ │
+│ └─────────────────────────────────────────┘ │
+├─────────────────────────────────────────────┤
+│ Status Bar                                  │
+│ [Confidence Score] [Validation] [Messages]  │
+└─────────────────────────────────────────────┘
+```
 
-### 4. Continuous Feedback Loop
-- Immediate feedback on actions
-- Clear paths for providing guidance
-- Easy correction of AI mistakes
-- Visible impact of developer feedback
+## Component Specifications
 
-## Phased Interaction Design
+### 1. Command Bar
 
-### Phase 1: Internal Dogfooding (Months 1-3)
+#### Intent Input
+- Natural language input field for describing desired functionality
+- Auto-completion for common patterns and constraints
+- Quick access to recent/saved intents
+- Support for structured intent templates
 
-#### Basic Intent Expression
-1. **Text-Based Intent Input**:
-   - Natural language input field
-   - Basic context selection
-   - Simple constraint specification
-   - Help system for intent formulation
+#### Action Buttons
+- **Generate**: Triggers AI code generation
+- **Validate**: Performs format and semantic validation
+- **View**: Switches between visualization modes
 
-2. **Code Generation Flow**:
-   ```
-   Developer                    System
-   ───────────────────────────────────────────
-   Enter intent   ───────►    Analyze intent
-                             Generate code
-                  ◄───────   Show result
-   Review code    ───────►    Update confidence
-   Accept/Modify  ───────►    Store/Regenerate
-   ```
+### 2. Intent Editor
 
-3. **Basic Verification Workflow**:
-   ```
-   Developer                    System
-   ───────────────────────────────────────────
-   Request check  ───────►    Run basic checks
-                             Show results
-                  ◄───────   Flag issues
-   View details   ───────►    Show explanation
-   Fix issues     ───────►    Verify fixes
-   ```
+#### Features
+- Syntax highlighting for intent specification
+- Real-time validation feedback
+- Constraint definition interface
+- Tag management
+- Property editor
 
-4. **Command Patterns**:
-   - Generate: Create code from intent
-   - Modify: Edit generated code
-   - Verify: Run basic checks
-   - Explain: Get AI explanation
-   - Accept: Approve generation
-   - Regenerate: Try alternative
+#### Layout
+```
+┌─────────────────────────────────┐
+│ Intent Type: [Dropdown ▼]       │
+├─────────────────────────────────┤
+│ Description:                    │
+│ [Multiline Input         ]      │
+├─────────────────────────────────┤
+│ Constraints:                    │
+│ + [Add Constraint]             │
+│ - Performance: O(n)            │
+│ - Safety: Handle empty arrays  │
+├─────────────────────────────────┤
+│ Tags: [math] [array] [utility] │
+└─────────────────────────────────┘
+```
 
-#### Initial Feedback Mechanisms
-1. **Binary Feedback**:
-   - Accept/Reject generations
-   - Mark issues in verification
-   - Flag unclear explanations
+### 3. Preview Panel
 
-2. **Simple Rating System**:
-   - Rate usefulness of explanations
-   - Rate accuracy of generation
-   - Rate verification helpfulness
+#### Features
+- Real-time preview of generated code
+- Interactive visualization of all three layers
+- Confidence score indicators
+- Link highlighting on hover
 
-### Phase 2: Pilot Program (Months 4-9)
+#### Visualization Modes
+1. **Unified View**: All layers with relationships
+2. **Layer Focus**: Detailed view of selected layer
+3. **Diff View**: Changes from previous version
+4. **Traditional Code**: Human-readable projection
 
-#### Enhanced Intent Expression
-1. **Multi-Modal Intent Input**:
-   ```
-   Intent Workspace
-   ├── Natural Language
-   │   └── Context-aware suggestions
-   ├── Constraints
-   │   ├── Performance requirements
-   │   ├── Security requirements
-   │   └── Compatibility needs
-   ├── Examples
-   │   ├── Code snippets
-   │   └── Test cases
-   └── System Context
-       ├── Module dependencies
-       └── API requirements
-   ```
+### 4. Layer Explorer
 
-2. **Interactive Generation Flow**:
-   ```
-   Developer                    System
-   ───────────────────────────────────────────
-   Enter intent   ───────►    Real-time analysis
-                  ◄───────   Suggest refinements
-   Refine intent  ───────►    Update suggestions
-   Select option  ───────►    Generate variants
-   Review options ───────►    Show comparisons
-   Choose/Modify  ───────►    Finalize code
-   ```
+#### Intent Layer Tab
+- Intent hierarchy visualization
+- Constraint relationship view
+- Tag-based navigation
+- Property inspector
 
-3. **Advanced Verification Integration**:
-   ```
-   Developer                    System
-   ───────────────────────────────────────────
-   Set criteria   ───────►    Configure checks
-   Run checks     ───────►    Tiered verification
-                  ◄───────   Detailed results
-   Explore issues ───────►    Root cause analysis
-   Guide fixes    ───────►    Automated repairs
-   ```
+#### Semantic Layer Tab
+- Interactive node-link diagram
+- Type hierarchy visualization
+- Symbol table explorer
+- Reference tracker
 
-4. **Collaboration Patterns**:
-   - Share intent and code
-   - Review changes
-   - Provide feedback
-   - Discuss alternatives
-   - Track decisions
+#### Execution Layer Tab
+- Control flow visualization
+- Data flow highlighting
+- Performance annotations
+- Debug points integration
 
-#### Enhanced Feedback System
-1. **Structured Feedback**:
-   - Detailed issue reporting
-   - Alternative suggestions
-   - Performance feedback
-   - Security concerns
-   - Style preferences
+#### Links Tab
+- Cross-layer reference visualization
+- Relationship matrix view
+- Impact analysis tools
+- Reference integrity checker
 
-2. **Learning Integration**:
-   - Personal preference tracking
-   - Team pattern learning
-   - Context-specific adaption
-   - Historical improvement tracking
+### 5. Status Bar
 
-### Phase 3: Targeted Rollout (Months 10-18)
+#### Confidence Score
+- Visual indicator (0-100%)
+- Confidence breakdown by component
+- Historical trend view
+- Threshold alerts
 
-#### Advanced Intent Management
-1. **Intent Hierarchy**:
-   ```
-   System Intent
-   ├── Module Intent
-   │   ├── Component Intent
-   │   └── Interface Intent
-   ├── Cross-cutting Intent
-   │   ├── Security Intent
-   │   └── Performance Intent
-   └── Evolution Intent
-       ├── Migration Goals
-       └── Future Requirements
-   ```
+#### Validation Status
+- Format validation results
+- Semantic validation results
+- Cross-reference integrity
+- Custom constraint checks
 
-2. **AI-Assisted Intent Refinement**:
-   ```
-   Developer                    System
-   ───────────────────────────────────────────
-   Express intent ───────►    Deep analysis
-                  ◄───────   Impact assessment
-   Review impact  ───────►    Suggest refinements
-   Refine intent  ───────►    Update analysis
-   Approve scope  ───────►    Generate solution
-   ```
+#### Messages
+- Error notifications
+- Warning indicators
+- Information updates
+- Action suggestions
 
-3. **Formal Verification Integration**:
-   ```
-   Developer                    System
-   ───────────────────────────────────────────
-   Set properties ───────►    Formal analysis
-                  ◄───────   Proof attempt
-   Review proof   ───────►    Explain steps
-   Guide proof    ───────►    Refine proof
-   Verify result  ───────►    Certify code
-   ```
+## Interaction Flows
 
-4. **Advanced Control Patterns**:
-   - Policy enforcement
-   - Architectural governance
-   - Performance gates
-   - Security validation
+### 1. Code Generation Flow
 
-#### Comprehensive Feedback Framework
-1. **Multi-dimensional Feedback**:
-   - Intent clarity
-   - Generation quality
-   - Performance impact
-   - Security implications
-   - Maintenance considerations
-   - Team collaboration impact
+```mermaid
+sequenceDiagram
+    Developer->>Intent Editor: Enter Intent
+    Intent Editor->>AI: Submit Intent
+    AI->>Preview: Generate ANRF
+    Preview->>Status Bar: Update Confidence
+    Developer->>Layer Explorer: Review Layers
+    Developer->>Preview: Accept/Modify
+```
 
-2. **Automated Learning**:
-   - Pattern recognition
-   - Style adaptation
-   - Error prediction
-   - Optimization suggestions
+### 2. Code Modification Flow
 
-### Phase 4: General Availability (Months 19+)
+```mermaid
+sequenceDiagram
+    Developer->>Layer Explorer: Select Element
+    Layer Explorer->>Preview: Show Context
+    Developer->>Preview: Make Changes
+    Preview->>AI: Validate Changes
+    AI->>Status Bar: Update Status
+    Developer->>Preview: Commit Changes
+```
 
-#### Mature Interaction Model
-1. **Intent Management**:
-   - Natural multi-modal input
-   - Contextual understanding
-   - Predictive assistance
-   - Full system awareness
+### 3. Error Recovery Flow
 
-2. **Generation Control**:
-   - Fine-grained control
-   - Style preservation
-   - Performance optimization
-   - Security hardening
+```mermaid
+sequenceDiagram
+    AI->>Status Bar: Report Error
+    Status Bar->>Developer: Show Notification
+    Developer->>Layer Explorer: Locate Issue
+    Layer Explorer->>Preview: Highlight Problem
+    Developer->>Preview: Fix Issue
+    Preview->>AI: Revalidate
+```
 
-3. **Verification Integration**:
-   - Comprehensive checking
-   - Automated certification
-   - Continuous validation
-   - Evolution tracking
+## Progressive Disclosure Strategy
 
-4. **Collaboration Framework**:
-   - Team synchronization
-   - Knowledge sharing
-   - Pattern distribution
-   - Governance enforcement
+### Level 1: Basic Interaction
+- Intent input and generation
+- Simple validation feedback
+- Basic layer visualization
+- Confidence score display
 
-#### Evolved Feedback System
-1. **Intelligent Feedback Processing**:
-   - Context-aware learning
-   - Team pattern synthesis
-   - Cross-project insights
-   - Predictive assistance
+### Level 2: Enhanced Control
+- Constraint definition
+- Cross-layer navigation
+- Detailed validation results
+- Performance insights
 
-2. **Ecosystem Integration**:
-   - Community patterns
-   - Industry best practices
-   - Security advisories
-   - Performance benchmarks
+### Level 3: Advanced Features
+- Custom visualization modes
+- Impact analysis tools
+- Detailed confidence metrics
+- Advanced debugging features
 
-## Interaction Patterns Library
+## Error Handling
 
-### 1. Intent Expression
-- Natural language input
-- Constraint specification
-- Example-based guidance
-- Context selection
-- Refinement dialogue
+### Validation Errors
+- Immediate visual feedback
+- Clear error messages
+- Suggested fixes
+- Context-sensitive help
 
-### 2. Code Generation
-- Progressive options
-- Variant exploration
-- Impact assessment
-- Iterative refinement
-- Style preservation
+### AI Generation Issues
+- Fallback options
+- Alternative suggestions
+- Manual override paths
+- Recovery guidance
 
-### 3. Verification Integration
-- Tiered checking
-- Formal verification
-- Performance analysis
-- Security validation
-- Compliance checking
+### User Input Problems
+- Real-time validation
+- Auto-correction suggestions
+- Format guidance
+- Example references
 
-### 4. Collaboration Support
-- Change sharing
-- Review process
-- Feedback collection
-- Knowledge distribution
-- Team synchronization
+## Feedback Mechanisms
 
-### 5. Control Mechanisms
-- Approval workflows
-- Override patterns
-- Policy enforcement
-- Governance implementation
-- Security controls
+### Visual Feedback
+- Color coding for confidence levels
+- Progress indicators for AI operations
+- Validation status icons
+- Reference highlighting
+
+### Interactive Feedback
+- Hover tooltips with details
+- Click-through explanations
+- Drag-drop layer navigation
+- Context menus for actions
+
+### System Feedback
+- Operation success/failure notices
+- Performance metrics
+- Resource usage indicators
+- System status updates
+
+## Keyboard Shortcuts
+
+### Navigation
+- `Ctrl+1/2/3`: Switch layers
+- `Ctrl+L`: Toggle link view
+- `Ctrl+F`: Find in current layer
+- `Alt+←/→`: Navigate history
+
+### Operations
+- `Ctrl+G`: Generate from intent
+- `Ctrl+V`: Validate current state
+- `Ctrl+S`: Save changes
+- `Ctrl+Z`: Undo operation
+
+## Phase 1 Implementation Notes
+
+### Priority Features
+1. Basic intent input and generation
+2. Three-layer visualization
+3. Essential validation feedback
+4. Simple confidence scoring
+5. Basic error handling
+
+### Deferred Features
+1. Advanced visualization modes
+2. Detailed impact analysis
+3. Custom constraint definitions
+4. Historical trend analysis
+
+### Integration Points
+1. VSCode extension API
+2. ANRF parsing library
+3. AI service endpoints
+4. Validation service
 
 ## Change Log
-- 2025-04-07: Added phased interaction patterns aligned with Tooling Implementation Plan
-- 2025-04-05: Initial interaction model created
+- 2025-04-07: Created Phase 1 interaction model specification

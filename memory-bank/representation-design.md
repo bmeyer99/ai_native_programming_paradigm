@@ -1,188 +1,455 @@
-# AI-Native Representation Format (ANRF)
+# AI-Native Representation Format (ANRF) Specification - v1
 
 ## Overview
+This document defines the AI-Native Representation Format (ANRF), a structured representation designed to balance machine optimization with semantic preservation. This v1 specification is stable for Phase 1 (Internal Dogfooding) implementation.
 
-The AI-Native Representation Format (ANRF) is a multi-level, layered intermediate representation designed specifically for AI-generated and AI-manipulated code. It balances machine optimization with semantic preservation and human understandability, serving as the canonical representation (`R`) in the formal mathematical framework of the AI-Native Programming Paradigm.
+## Core Principles
+- **Layered Structure**: Separates execution code from semantic information
+- **Bidirectional References**: Maintains connections between layers
+- **Semantic Preservation**: Retains intent and meaning alongside optimized code
+- **Verification Support**: Enables formal analysis and correctness checking
+- **Extensibility**: Allows for evolution while maintaining backward compatibility
 
-## Design Philosophy
+## Format Structure
 
-ANRF is built on three core principles:
+### 1. Layered Architecture
 
-1. **Semantic Preservation**: Maintaining a complete and accurate mapping between human intent and executable code
-2. **Optimization Flexibility**: Enabling aggressive optimizations while preserving semantic equivalence
-3. **Multi-level Representation**: Supporting multiple abstraction levels within a unified framework
-
-## Layered Architecture
-
-ANRF employs a tri-layered architecture where each layer serves a distinct purpose but maintains bidirectional references to the others:
-
-1. **Execution Layer (EL)**: The lowest level, focused on efficient execution
-2. **Semantic Mapping Layer (SML)**: The middle layer, maintaining semantic relationships
-3. **Intent Metadata Layer (IML)**: The highest level, preserving human intent and design rationale
-
-### Layer Relationships
+ANRF uses a three-layer architecture:
 
 ```
-┌─────────────────────────┐
-│ Intent Metadata Layer   │ ← Human intent, design rationale, constraints
-├─────────────────────────┤
-│ Semantic Mapping Layer  │ ← Semantic relationships, type information
-├─────────────────────────┤
-│ Execution Layer         │ ← Optimized for machine execution
-└─────────────────────────┘
+┌─────────────────────────────────┐
+│           Intent Layer          │
+│  (High-level intent and design) │
+├─────────────────────────────────┤
+│         Semantic Layer          │
+│ (Relationships and constraints) │
+├─────────────────────────────────┤
+│        Execution Layer          │
+│    (Optimized execution code)   │
+└─────────────────────────────────┘
 ```
 
-Each layer can be processed independently but maintains bidirectional references to preserve semantic coherence across transformations.
+#### 1.1 Intent Layer
+Contains high-level intent, design decisions, and requirements that drove the code generation.
 
-## Core Components
+#### 1.2 Semantic Layer
+Maps between intent and execution, containing relationships, types, and constraints.
 
-### 1. Execution Layer (EL)
+#### 1.3 Execution Layer
+Contains optimized code ready for execution, focusing on performance.
 
-The Execution Layer is a graph-based representation optimized for efficient execution:
+### 2. Concrete Format Definition (v1)
 
-- **Nodes**: Represent computational operations
-- **Edges**: Represent data and control flow
-- **Properties**:
-  - Static Single Assignment (SSA) form
-  - Explicit type information
-  - Memory access model
-  - Control flow primitives
+For Phase 1, ANRF is serialized using Protocol Buffers (protobuf) for efficient binary representation with good language support.
 
-The EL is inspired by LLVM IR and MLIR but extends them with AI-specific optimizations and metadata hooks.
+```protobuf
+syntax = "proto3";
 
-### 2. Semantic Mapping Layer (SML)
+message ANRF {
+  string anrf_id = 1;          // Unique identifier
+  string version = 2;          // Format version (v1)
+  IntentLayer intent = 3;      // Intent layer
+  SemanticLayer semantic = 4;  // Semantic layer
+  ExecutionLayer execution = 5; // Execution layer
+  map<string, string> metadata = 6; // Additional metadata
+}
 
-The Semantic Mapping Layer maintains the relationships between program elements:
+message IntentLayer {
+  string intent_type = 1;      // E.g., "function", "class", "module"
+  string description = 2;      // Natural language description
+  repeated Constraint constraints = 3; // Explicit constraints
+  repeated string tags = 4;    // Categorization tags
+  map<string, string> properties = 5; // Additional properties
+}
 
-- **Entity Map**: Maps program entities (variables, functions, types) to their semantic meanings
-- **Relationship Graph**: Captures relationships between entities (uses, dependencies, etc.)
-- **Transformation History**: Records the sequence of transformations applied during optimization
-- **Verification Conditions**: Formal conditions that must be preserved during transformations
+message Constraint {
+  string type = 1;             // Constraint type
+  string description = 2;      // Human-readable description
+  string formal_spec = 3;      // Optional formal specification
+}
 
-### 3. Intent Metadata Layer (IML)
+message SemanticLayer {
+  repeated Node nodes = 1;     // Semantic graph nodes
+  repeated Edge edges = 2;     // Semantic graph edges
+  repeated TypeDef types = 3;  // Type definitions
+  map<string, string> symbol_table = 4; // Symbol references
+}
 
-The Intent Metadata Layer preserves human intent and design rationale:
+message Node {
+  string node_id = 1;          // Unique node identifier
+  string node_type = 2;        // Node type (e.g., "variable", "function", "expression")
+  string label = 3;            // Human-readable label
+  map<string, string> properties = 4; // Node properties
+  repeated string execution_refs = 5; // References to execution layer
+  repeated string intent_refs = 6;    // References to intent layer
+}
 
-- **Intent Annotations**: Captures the purpose and constraints of code elements
-- **Design Rationale**: Documents why specific implementation choices were made
-- **Domain Knowledge**: Encodes domain-specific information relevant to the code
-- **Natural Language Descriptions**: Human-readable explanations of code functionality
+message Edge {
+  string edge_id = 1;          // Unique edge identifier
+  string source_id = 2;        // Source node ID
+  string target_id = 3;        // Target node ID
+  string edge_type = 4;        // Edge type (e.g., "calls", "depends_on", "contains")
+  map<string, string> properties = 5; // Edge properties
+}
 
-## Cross-Layer References
+message TypeDef {
+  string type_id = 1;          // Type identifier
+  string name = 2;             // Type name
+  string type_kind = 3;        // E.g., "primitive", "struct", "function", "union"
+  repeated TypeField fields = 4; // For composite types
+  string parent_type = 5;      // For inheritance
+  map<string, string> properties = 6; // Type properties
+}
 
-ANRF uses a bidirectional reference system to maintain coherence across layers:
+message TypeField {
+  string name = 1;             // Field name
+  string type_id = 2;          // Type reference
+  bool optional = 3;           // Whether field is optional
+  map<string, string> properties = 4; // Field properties
+}
 
-- **Forward References**: Links from higher to lower layers (intent → semantics → execution)
-- **Backward References**: Links from lower to higher layers (execution → semantics → intent)
-- **Reference Types**:
-  - **Direct**: One-to-one mappings between elements
-  - **Compositional**: One-to-many or many-to-one mappings
-  - **Constraint**: Relationships that enforce invariants across layers
+message ExecutionLayer {
+  string format = 1;           // Execution format (e.g., "graph", "bytecode", "ir")
+  bytes code = 2;              // Actual execution code in binary format
+  repeated ExecNode nodes = 3; // For graph-based representation
+  repeated ExecEdge edges = 4; // For graph-based representation
+  map<string, string> properties = 5; // Execution properties
+}
 
-## Formal Representation
+message ExecNode {
+  string node_id = 1;          // Unique node identifier
+  string operation = 2;        // Operation type
+  repeated string inputs = 3;  // Input references
+  repeated string outputs = 4; // Output references
+  map<string, string> properties = 5; // Operation properties
+}
 
-ANRF can be formally represented as:
-
+message ExecEdge {
+  string edge_id = 1;          // Unique edge identifier
+  string source_id = 2;        // Source node ID
+  string target_id = 3;        // Target node ID
+  string edge_type = 4;        // Edge type
+  map<string, string> properties = 5; // Edge properties
+}
 ```
-ANRF = (EL, SML, IML, FR, BR)
+
+### 3. Metadata Schema
+
+#### 3.1 Intent Layer Metadata
+- **Intent Type**: Function, class, module, etc.
+- **Description**: Natural language description of intent
+- **Constraints**: Explicit constraints (performance, security, etc.)
+- **Tags**: Categorization and search tags
+- **Properties**: Additional key-value properties
+
+#### 3.2 Semantic Layer Metadata
+- **Nodes**: Semantic graph nodes (variables, functions, expressions)
+- **Edges**: Relationships between nodes (calls, depends_on, contains)
+- **Types**: Type definitions and relationships
+- **Symbol Table**: Mapping of symbols to nodes
+
+#### 3.3 Execution Layer Metadata
+- **Format**: Execution representation format
+- **Code**: Binary representation of executable code
+- **Nodes/Edges**: For graph-based execution representations
+- **Properties**: Execution-specific properties
+
+### 4. Cross-Layer References
+
+References between layers are maintained through IDs:
+- Intent layer elements reference semantic nodes via node IDs
+- Semantic nodes reference execution elements via execution_refs
+- Execution elements can reference semantic nodes via properties
+
+## Validation Rules
+
+### 1. Structural Validation
+- All required fields must be present
+- IDs must be unique within their scope
+- References must point to existing elements
+
+### 2. Semantic Validation
+- Type references must be valid
+- Graph must not contain cycles (unless explicitly allowed)
+- Symbol references must resolve to valid nodes
+
+### 3. Cross-Layer Validation
+- Cross-layer references must be valid
+- Semantic layer must completely cover execution layer
+- Intent constraints must be verifiable against semantic layer
+
+## Example ANRF Instance
+
+### Simple Function Example
+
+```json
+{
+  "anrf_id": "func_123456",
+  "version": "v1",
+  "intent": {
+    "intent_type": "function",
+    "description": "Calculate the sum of an array of numbers",
+    "constraints": [
+      {
+        "type": "performance",
+        "description": "Linear time complexity O(n)"
+      },
+      {
+        "type": "safety",
+        "description": "Handle empty arrays gracefully"
+      }
+    ],
+    "tags": ["math", "array", "utility"],
+    "properties": {
+      "author": "AI",
+      "created_at": "2025-04-07T01:00:00Z"
+    }
+  },
+  "semantic": {
+    "nodes": [
+      {
+        "node_id": "func_sum",
+        "node_type": "function",
+        "label": "sum",
+        "properties": {
+          "return_type": "type_number"
+        },
+        "execution_refs": ["exec_node_1"],
+        "intent_refs": []
+      },
+      {
+        "node_id": "param_numbers",
+        "node_type": "parameter",
+        "label": "numbers",
+        "properties": {
+          "type": "type_number_array"
+        },
+        "execution_refs": ["exec_node_2"],
+        "intent_refs": []
+      },
+      {
+        "node_id": "var_result",
+        "node_type": "variable",
+        "label": "result",
+        "properties": {
+          "type": "type_number"
+        },
+        "execution_refs": ["exec_node_3"],
+        "intent_refs": []
+      }
+    ],
+    "edges": [
+      {
+        "edge_id": "edge_1",
+        "source_id": "func_sum",
+        "target_id": "param_numbers",
+        "edge_type": "has_parameter"
+      },
+      {
+        "edge_id": "edge_2",
+        "source_id": "func_sum",
+        "target_id": "var_result",
+        "edge_type": "declares"
+      }
+    ],
+    "types": [
+      {
+        "type_id": "type_number",
+        "name": "Number",
+        "type_kind": "primitive"
+      },
+      {
+        "type_id": "type_number_array",
+        "name": "Number[]",
+        "type_kind": "array",
+        "fields": [],
+        "parent_type": "",
+        "properties": {
+          "element_type": "type_number"
+        }
+      }
+    ],
+    "symbol_table": {
+      "sum": "func_sum",
+      "numbers": "param_numbers",
+      "result": "var_result"
+    }
+  },
+  "execution": {
+    "format": "graph",
+    "code": "",
+    "nodes": [
+      {
+        "node_id": "exec_node_1",
+        "operation": "function_def",
+        "inputs": ["exec_node_2"],
+        "outputs": ["exec_node_7"],
+        "properties": {
+          "name": "sum"
+        }
+      },
+      {
+        "node_id": "exec_node_2",
+        "operation": "parameter",
+        "inputs": [],
+        "outputs": ["exec_node_4"],
+        "properties": {
+          "name": "numbers"
+        }
+      },
+      {
+        "node_id": "exec_node_3",
+        "operation": "variable_def",
+        "inputs": [],
+        "outputs": ["exec_node_4"],
+        "properties": {
+          "name": "result",
+          "initial_value": "0"
+        }
+      },
+      {
+        "node_id": "exec_node_4",
+        "operation": "for_each",
+        "inputs": ["exec_node_2", "exec_node_3"],
+        "outputs": ["exec_node_5", "exec_node_6"],
+        "properties": {
+          "iterator": "num"
+        }
+      },
+      {
+        "node_id": "exec_node_5",
+        "operation": "add",
+        "inputs": ["exec_node_3", "exec_node_4"],
+        "outputs": ["exec_node_3"],
+        "properties": {}
+      },
+      {
+        "node_id": "exec_node_6",
+        "operation": "end_loop",
+        "inputs": ["exec_node_5"],
+        "outputs": ["exec_node_7"],
+        "properties": {}
+      },
+      {
+        "node_id": "exec_node_7",
+        "operation": "return",
+        "inputs": ["exec_node_3"],
+        "outputs": [],
+        "properties": {}
+      }
+    ],
+    "edges": [
+      {
+        "edge_id": "exec_edge_1",
+        "source_id": "exec_node_1",
+        "target_id": "exec_node_2",
+        "edge_type": "control_flow"
+      },
+      {
+        "edge_id": "exec_edge_2",
+        "source_id": "exec_node_2",
+        "target_id": "exec_node_3",
+        "edge_type": "control_flow"
+      },
+      {
+        "edge_id": "exec_edge_3",
+        "source_id": "exec_node_3",
+        "target_id": "exec_node_4",
+        "edge_type": "control_flow"
+      },
+      {
+        "edge_id": "exec_edge_4",
+        "source_id": "exec_node_4",
+        "target_id": "exec_node_5",
+        "edge_type": "loop_body"
+      },
+      {
+        "edge_id": "exec_edge_5",
+        "source_id": "exec_node_5",
+        "target_id": "exec_node_6",
+        "edge_type": "control_flow"
+      },
+      {
+        "edge_id": "exec_edge_6",
+        "source_id": "exec_node_6",
+        "target_id": "exec_node_7",
+        "edge_type": "control_flow"
+      }
+    ],
+    "properties": {
+      "complexity": "O(n)"
+    }
+  },
+  "metadata": {
+    "generated_by": "AI",
+    "generation_date": "2025-04-07T01:00:00Z",
+    "confidence_score": "0.95"
+  }
+}
 ```
 
-Where:
-- `EL`: Execution Layer
-- `SML`: Semantic Mapping Layer
-- `IML`: Intent Metadata Layer
-- `FR`: Forward References
-- `BR`: Backward References
+## Guidelines for Generating Synthetic ANRF Examples
 
-### Execution Layer
+### 1. Start with Intent
+1. Define a clear intent (function, class, module)
+2. Specify constraints and requirements
+3. Add appropriate tags and properties
 
-```
-EL = (N, E, T, C)
-```
+### 2. Build Semantic Layer
+1. Create nodes for functions, parameters, variables
+2. Define edges to represent relationships
+3. Specify types for all elements
+4. Build a complete symbol table
 
-Where:
-- `N`: Set of computational nodes
-- `E`: Set of data and control flow edges
-- `T`: Type system
-- `C`: Control flow graph
+### 3. Construct Execution Layer
+1. Choose appropriate execution format (graph recommended for v1)
+2. Create execution nodes for operations
+3. Connect nodes with edges for control and data flow
+4. Ensure references to semantic layer are maintained
 
-### Semantic Mapping Layer
+### 4. Validate the Example
+1. Check structural validity
+2. Verify semantic consistency
+3. Ensure cross-layer references are valid
 
-```
-SML = (EM, RG, TH, VC)
-```
+### 5. Scaling Approach
+For generating 5,000-10,000 examples:
+1. Start with template functions covering common patterns
+2. Systematically vary:
+   - Function complexity (simple to moderate)
+   - Parameter types and counts
+   - Control flow patterns
+   - Data structures used
+3. Ensure diversity in intent descriptions and constraints
+4. Generate variations programmatically using templates
 
-Where:
-- `EM`: Entity map
-- `RG`: Relationship graph
-- `TH`: Transformation history
-- `VC`: Verification conditions
+## Implementation Notes for Phase 1
 
-### Intent Metadata Layer
+### Serialization
+- Primary: Protocol Buffers (.proto definition provided)
+- Alternative: JSON for debugging and human readability
 
-```
-IML = (IA, DR, DK, NL)
-```
+### Storage
+- Store in object storage as specified by Systems Architect
+- Use naming convention: `anrf/{anrfId}/{version}.anrf`
 
-Where:
-- `IA`: Intent annotations
-- `DR`: Design rationale
-- `DK`: Domain knowledge
-- `NL`: Natural language descriptions
+### Processing Libraries
+- Develop Python library for ANRF manipulation:
+  - Parsing/serialization
+  - Validation
+  - Layer access
+  - Reference resolution
 
-## Serialization Format
+### Versioning
+- Format version: v1
+- Individual ANRF version: tracked in metadata
 
-ANRF uses a hybrid serialization approach:
+## Future Evolution (Post-Phase 1)
+- Enhanced execution layer formats
+- Richer semantic relationships
+- Formal verification integration
+- Performance optimizations
+- Extended cross-language support
 
-1. **Binary Format**: For efficient storage and processing of the Execution Layer
-2. **Structured Format**: JSON-based format for the Semantic Mapping Layer
-3. **Rich Text Format**: For the Intent Metadata Layer, supporting markdown and structured annotations
-
-The serialized format includes a header with version information and layer offsets, followed by the serialized content of each layer and the cross-layer references.
-
-## Operations and Transformations
-
-ANRF supports several key operations:
-
-1. **Generation (`Gen`)**: Creating ANRF from human intent
-2. **Optimization (`Opt`)**: Transforming ANRF to improve execution efficiency
-3. **Viewing (`View`)**: Generating human-readable representations from ANRF
-4. **Verification (`Verify`)**: Checking semantic preservation across transformations
-
-### Optimization Transformations
-
-Optimizations in ANRF primarily target the Execution Layer but must maintain the cross-layer references:
-
-1. **Local Optimizations**: Peephole optimizations, constant folding, etc.
-2. **Global Optimizations**: Dead code elimination, loop optimizations, etc.
-3. **Specialization**: Target-specific optimizations
-4. **Parallelization**: Identifying and exploiting parallelism
-
-Each optimization must preserve the semantic equivalence as defined by the formal framework.
-
-## Verification Mechanisms
-
-ANRF includes built-in verification mechanisms:
-
-1. **Structural Verification**: Ensuring the well-formedness of the representation
-2. **Semantic Verification**: Checking semantic preservation using the formal definitions
-3. **Cross-Layer Consistency**: Verifying the consistency of references across layers
-4. **Transformation Correctness**: Ensuring that transformations preserve semantics
-
-## Evolution and Extensibility
-
-ANRF is designed for evolution and extensibility:
-
-1. **Version Control**: Explicit versioning of the format specification
-2. **Extension Points**: Well-defined points for extending the format
-3. **Dialect Mechanism**: Support for domain-specific dialects (similar to MLIR)
-4. **Compatibility Layer**: Mechanisms for backward compatibility
-
-## Integration with Existing Systems
-
-ANRF provides integration paths with existing systems:
-
-1. **Import/Export**: Conversion to/from existing IRs (LLVM IR, MLIR, etc.)
-2. **Execution Bridge**: Direct execution through JIT compilation or interpretation
-3. **Development Tool Integration**: APIs for IDEs, debuggers, and other development tools
-4. **Legacy Code Integration**: Mechanisms for integrating with legacy codebases
+## Change Log
+- 2025-04-07: Created stable v1 ANRF specification for Phase 1 implementation
