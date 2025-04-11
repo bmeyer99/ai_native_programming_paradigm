@@ -38,6 +38,21 @@ Maps between intent and execution, containing relationships, types, and constrai
 #### 1.3 Execution Layer
 Contains optimized code ready for execution, focusing on performance.
 
+##### Execution Modes and Runtime Integration (v1.1, Material Change)
+
+The execution layer now explicitly supports multiple execution modes:
+- **Interpretation**: Direct execution of ANRF for rapid prototyping and debugging.
+- **Just-In-Time (JIT) Compilation**: Runtime compilation to intermediate representations (e.g., WASM, Python bytecode).
+- **Ahead-of-Time (AOT) Compilation**: Static compilation to native or platform-specific binaries for production.
+
+**Sandboxing and Resource Limits**: Execution metadata must specify sandboxing requirements and resource quotas (CPU, memory, I/O) to ensure secure and isolated execution.
+
+**Runtime Policy Enforcement**: Properties can specify runtime security policies (e.g., network/file access restrictions) and audit logging requirements.
+
+**Execution Hooks**: The execution layer supports pre- and post-execution hooks for verification and monitoring, referenced in execution metadata.
+
+These changes are material and require cascade validation across verification, security, and tooling documentation.
+
 ### 2. Concrete Format Definition (v1)
 
 For Phase 1, ANRF is serialized using Protocol Buffers (protobuf) for efficient binary representation with good language support.
@@ -152,7 +167,12 @@ message ExecEdge {
 - **Format**: Execution representation format
 - **Code**: Binary representation of executable code
 - **Nodes/Edges**: For graph-based execution representations
-- **Properties**: Execution-specific properties
+- **Properties**: Execution-specific properties, including:
+  - `execution_mode`: "interpretation", "jit", or "aot"
+  - `sandboxing`: Boolean or configuration object
+  - `resource_limits`: Object specifying CPU, memory, I/O quotas
+  - `runtime_policies`: Security and access control policies
+  - `execution_hooks`: References to pre/post-execution verification or monitoring hooks
 
 ### 4. Cross-Layer References
 
