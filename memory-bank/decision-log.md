@@ -2,6 +2,61 @@
 
 This document records major decisions and their rationales for the AI-Native Programming Paradigm development.
 
+## 2025-04-11: Adoption of Secure-by-Default Approach
+
+**Decision**: Adopt a secure-by-default approach for memory safety, sandboxing, and execution policy enforcement across the entire AI-Native Programming Paradigm.
+
+**Rationale**:
+- Enhances security posture by making safety non-negotiable rather than opt-in
+- Aligns with verification-centric architecture principle by enforcing security verification
+- Reduces security risks by requiring explicit, auditable override for unsafe code
+- Provides consistent security guarantees across all system components
+- Strengthens user trust in AI-generated code by ensuring baseline safety
+
+**Implementation Approach**:
+- Update execution model to enforce sandboxing and memory safety by default
+- Modify ANRF metadata schema to encode safety/sandboxing as required fields
+- Ensure AI models generate memory-safe, sandboxed code by default
+- Update developer tools to clearly indicate safety status and require explicit opt-out
+- Implement auditable override mechanisms with justification requirements
+- Update verification services to block unsafe code without explicit override
+
+**Alternatives Considered**:
+- Tiered security approach with opt-in for higher levels (rejected as too permissive)
+- Warning-based approach without enforcement (rejected as insufficient)
+- Project-level security settings (rejected in favor of per-code-unit granularity)
+
+**Impact on Phase 1**:
+- Requires updates to recently completed execution model
+- Necessitates modifications to ANRF specification
+- Adds security indicators to developer experience
+- Enhances verification requirements
+- Requires additional migration guidance for existing code
+
+## 2025-04-11: Execution Model Definition
+
+**Decision**: Approve the comprehensive execution model for ANRF instances, defining how they are executed, interpreted, or compiled.
+
+**Rationale**:
+- Provides a clear framework for ANRF execution across different modes
+- Establishes security and isolation mechanisms for safe execution
+- Defines integration points with other services
+- Outlines extensibility and future directions
+- Addresses a critical gap in the technical documentation
+
+**Implementation Approach**:
+- Define execution modes (Interpretation, JIT, AOT)
+- Design Execution Service architecture with core components
+- Establish execution flow from request to result
+- Specify security and isolation mechanisms
+- Define integration points with other services
+
+**Impact on Phase 1**:
+- Provides foundation for tool development
+- Enables consistent execution behavior across implementations
+- Supports security and verification requirements
+- Facilitates integration with AI services
+
 ## 2025-04-07: Phase 1 Execution Planning Completion
 
 **Decision**: Finalize and approve the comprehensive Phase 1 (Internal Dogfooding) execution plan.
