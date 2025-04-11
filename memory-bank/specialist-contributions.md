@@ -31,6 +31,27 @@ This document logs key insights and contributions from each specialist role in t
 - Created integration points between services
 - Ensured scalability and performance considerations
 
+### Execution Model Definition (2025-04-11)
+- Created comprehensive execution model for ANRF instances
+- Defined execution modes (Interpretation, JIT, AOT)
+- Designed Execution Service architecture with core components
+- Established execution flow from request to result
+- Defined security and isolation mechanisms
+- Specified integration points with other services
+- Outlined extensibility and future directions
+
+## Security Specialist
+
+### Secure-by-Default Memory Safety and Sandboxing (2025-04-11)
+- Proposed fundamental shift to make memory safety and sandboxing the default for all code
+- Identified need for explicit, auditable override mechanisms for opting out of safety features
+- Detailed required changes across representation, AI generation, verification, execution, and tooling
+- Specified that ANRF must encode safety/sandboxing metadata as required, not optional
+- Established that verification services must block unsafe code unless explicit override is present
+- Required execution environments to enforce sandboxing and resource limits by default
+- Mandated that developer tools clearly indicate safety status and require explicit action to opt out
+- Ensured all override mechanisms are auditable and require justification
+
 ## AI Integration Specialist
 
 ### Phase 1 AI Model Development and Training Plan (2025-04-07)

@@ -4,7 +4,31 @@ This document tracks active workflows, specialist assignments, and handoff statu
 
 ## Active Workflows
 
-### 1. Phase 1 Execution Planning
+### 1. Secure-by-Default Implementation
+**Status**: In Progress
+**Current Phase**: Initial architectural planning
+**Specialists Involved**:
+- Security Specialist → Proposed secure-by-default approach for memory safety and sandboxing ✓
+- Systems Architect → Updating execution model and architectural components (IN PROGRESS)
+- Language Designer → Pending updates to ANRF metadata schema
+- AI Integration Specialist → Pending updates to code generation models
+- Developer Experience Designer → Pending updates to safety status UI and override interfaces
+- Tool Ecosystem Engineer → Pending updates to verification tools
+- Implementation Strategist → Pending migration guidance development
+
+**Next Steps**:
+- Systems Architect: Update execution model to enforce secure-by-default behavior
+- Systems Architect: Design explicit override mechanisms with audit requirements
+- Systems Architect: Provide guidance to other specialists on required changes
+
+**Dependencies**:
+- Language Designer updates to ANRF require Systems Architect's security specifications
+- AI Integration Specialist updates require revised ANRF metadata schema
+- Developer Experience Designer updates require security status specifications
+- Tool Ecosystem Engineer updates require verification requirements
+- Implementation Strategist guidance requires technical specifications from all specialists
+
+### 2. Phase 1 Execution Planning
 **Status**: Completed
 **Current Phase**: Detailed planning for Internal Dogfooding phase
 **Specialists Involved**:
@@ -66,6 +90,31 @@ This document tracks active workflows, specialist assignments, and handoff statu
 - Development tool integration design for version control, debugging, testing
 
 ## Recent Handoffs
+
+### 2025-04-11: Security Specialist → Systems Architect
+**Topic**: Secure-by-Default Memory Safety and Sandboxing
+**Status**: In Progress
+**Key Deliverables**:
+- Proposal to make memory safety and sandboxing the default for all code
+- Requirements for explicit, auditable override mechanisms
+- Detailed changes needed across representation, AI generation, verification, execution, and tooling
+- Specifications for ANRF safety/sandboxing metadata as required fields
+- Requirements for verification services to block unsafe code without explicit override
+- Mandate for execution environments to enforce sandboxing by default
+- Requirements for developer tools to clearly indicate safety status
+- Specifications for auditable override mechanisms with justification requirements
+
+### 2025-04-11: Systems Architect → Paradigm Orchestrator
+**Topic**: Execution Model Definition
+**Status**: Completed
+**Key Deliverables**:
+- Comprehensive execution model for ANRF instances
+- Definition of execution modes (Interpretation, JIT, AOT)
+- Execution Service architecture with core components
+- Execution flow from request to result
+- Security and isolation mechanisms
+- Integration points with other services
+- Extensibility and future directions
 
 ### 2025-04-07: Implementation Strategist → Paradigm Orchestrator
 **Topic**: Phase 1 Core Team Selection and Onboarding Plan
@@ -134,13 +183,18 @@ This document tracks active workflows, specialist assignments, and handoff statu
 - Technical dependencies and requirements
 
 ## Pending Handoffs
-- None currently identified
+- Systems Architect → Language Designer: Security specifications for ANRF metadata schema
+- Systems Architect → AI Integration Specialist: Requirements for secure-by-default code generation
+- Systems Architect → Developer Experience Designer: Requirements for safety status indicators and override UI
+- Systems Architect → Tool Ecosystem Engineer: Requirements for verification and CI/CD updates
+- Systems Architect → Implementation Strategist: Technical implications for migration and adoption
 
 ## Workflow Dependencies
 - All Phase 1 execution planning dependencies have been resolved
+- Secure-by-Default implementation dependencies are being established
 
 ## Open Issues and Blockers
 - None currently identified
 
 ## Last Updated
-2025-04-07
+2025-04-11
