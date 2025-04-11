@@ -1,65 +1,119 @@
 # Concept Evolution
 
-This document tracks how core concepts in the AI-Native Programming Paradigm evolve through specialist collaboration.
+This document tracks how key concepts in the AI-Native Programming Paradigm have evolved through collaboration between specialists.
 
-## Security Concepts
+## Execution Model
 
-### Secure-by-Default Memory Safety and Sandboxing
+### Initial Concept (2025-03-01)
+- Two-layer model with high-level intent and low-level execution
+- Direct transformation from intent to execution
+- Limited traceability between layers
+- Focus on functional correctness
 
-**Initial Concept (2025-04-11)**:
-- **Originator**: Security Specialist
-- **Core Idea**: Make memory safety, sandboxing, and execution policy enforcement the default for all code in the AI-Native Programming Paradigm
-- **Key Principles**:
-  - Security should be non-negotiable by default
-  - Explicit, auditable override required for opting out
-  - All system components must enforce this consistently
-  - Documentation must reflect secure-by-default as baseline guarantee
+### Evolution to Three-Layer Model (2025-03-10)
+- Introduction of semantic layer as intermediate representation
+- Semantic layer serves as optimization target
+- Bidirectional references between layers for traceability
+- Focus on both correctness and optimization
 
-**Evolution Stage 1: Architectural Integration (In Progress)**
-- **Owner**: Systems Architect
-- **Current Focus**: 
-  - Updating execution model to enforce secure-by-default behavior
-  - Designing explicit override mechanisms with audit requirements
-  - Identifying all system components requiring updates
-  - Providing guidance to other specialists on required changes
-- **Key Developments**:
-  - Execution model recently created (2025-04-11), provides foundation for secure-by-default implementation
-  - Sandboxing and isolation mechanisms already included in execution model, but not as mandatory defaults
-- **Next Evolution**: Technical specifications for each specialist domain
+### Finalized Execution Model (2025-03-15)
+- Three-layer model (Intent, Semantic, Execution) with clear separation of concerns
+- Semantic primacy principle established
+- Transformation framework for optimization across the stack
+- Verification framework for ensuring correctness across transformations
+- Bidirectional traceability between all layers
 
-**Planned Evolution Stages**:
-1. **Representation Format Updates** (Language Designer)
-   - Update ANRF metadata schema to encode safety/sandboxing as required fields
-   - Ensure validation rules enforce safety requirements
+## AI-Native Representation Format (ANRF)
 
-2. **AI Generation Alignment** (AI Integration Specialist)
-   - Update AI models to generate memory-safe, sandboxed code by default
-   - Implement explicit override detection in code generation
+### Initial Concept (2025-03-05)
+- Text-based format with annotations
+- Limited support for optimization metadata
+- Focus on representing intent and execution
+- Simple reference system between layers
 
-3. **Developer Experience Integration** (Developer Experience Designer)
-   - Design clear UI indicators for safety status
-   - Create explicit opt-out interfaces with justification requirements
+### Evolution to Structured Format (2025-03-15)
+- Structured format with explicit representation of all three layers
+- Rich metadata for optimization guidance
+- Enhanced reference system for traceability
+- Support for multiple views of the same code
 
-4. **Verification Enhancement** (Tool Ecosystem Engineer)
-   - Update verification tools to treat absence of safety/sandboxing as an error
-   - Implement CI/CD pipeline enforcement
+### Finalized ANRF Format (2025-03-20)
+- Comprehensive format capturing intent, semantics, and execution
+- Bidirectional reference system for complete traceability
+- Extensive metadata schema for properties and constraints
+- Extensibility mechanism for format evolution
+- Multiple serialization formats (text, binary, graph)
 
-5. **Implementation Strategy** (Implementation Strategist)
-   - Develop migration guidance for existing code
-   - Create adoption strategy for secure-by-default approach
+## Security Approach
 
-**Relationship to Core Principles**:
-- Strengthens "Verification-Centric Architecture" principle by making security verification non-negotiable
-- Enhances "Continuous Verification" by enforcing security at every level
-- Maintains "Developer Empowerment" by allowing explicit override when necessary, but with appropriate safeguards
+### Initial Concept (2025-03-25)
+- Security as an optional property
+- Opt-in approach to memory safety, resource constraints, and sandboxing
+- Limited verification of security properties
+- Security as a separate concern from functionality
 
-## Intent-Driven Development Concepts
+### Evolution to Tiered Security (2025-04-01)
+- Security tiers with increasing levels of enforcement
+- Default tier with basic security properties
+- Higher tiers with more comprehensive security guarantees
+- Verification appropriate to each security tier
+- Security integrated with functionality
 
-*No evolution tracked yet*
+### Evolution to Secure-by-Default (2025-04-05)
+- Security as a fundamental property of all code
+- Memory safety, resource constraints, and sandboxing by default
+- Explicit, justified, and approved overrides for exceptions
+- Comprehensive verification of security properties
+- Security as an integral part of the paradigm
 
-## Semantic Preservation Concepts
+### Finalized Secure-by-Default Approach (2025-04-11)
+- Secure-by-default as a core principle across all components
+- Memory safety, resource constraints, and sandboxing enforced by default
+- Override workflow with justification, approval, and audit trail
+- Security verification integrated throughout the development lifecycle
+- Security visualization, explanation, and documentation as first-class concerns
+- Tool ecosystem fully supporting the secure-by-default approach
 
-*No evolution tracked yet*
+## Developer Experience
 
-## Last Updated
-2025-04-11
+### Initial Concept (2025-03-15)
+- Focus on code generation and optimization
+- Limited visibility into optimized code
+- Traditional debugging and testing approaches
+- Documentation focused on functionality
+
+### Evolution to Enhanced Visibility (2025-03-25)
+- Improved visualization of optimized code
+- Layer-aware debugging and testing
+- Enhanced documentation with intent and semantics
+- Feedback mechanisms for guiding optimization
+
+### Finalized Developer Experience (2025-04-10)
+- Comprehensive visualization framework for all layers
+- Intuitive navigation between intent, semantics, and execution
+- Security visualization integrated with code visualization
+- Security-aware debugging and testing
+- Documentation capturing intent, semantics, security, and performance
+- Collaborative workflows for security review and approval
+
+## Tool Ecosystem
+
+### Initial Concept (2025-03-20)
+- Adaptation of existing tools to work with ANRF
+- Basic support for the three-layer model
+- Limited integration between tools
+- Focus on individual developer productivity
+
+### Evolution to Integrated Toolchain (2025-04-01)
+- Purpose-built tools for the AI-Native Programming Paradigm
+- Deep integration with the three-layer model
+- Seamless workflows across tools
+- Support for team collaboration
+
+### Finalized Tool Ecosystem (2025-04-11)
+- Comprehensive tool integration framework
+- Security visualization, override workflow, and explanation interfaces
+- Security-aware debugging, testing, and documentation
+- CI/CD pipeline with security gates and override validation
+- Collaboration tools with security review and approval workflows
+- Full support for the secure-by-default approach across all tools
