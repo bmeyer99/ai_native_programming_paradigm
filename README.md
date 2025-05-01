@@ -1,27 +1,18 @@
 # AI-Native Programming Paradigm Documentation
 
-## Quick Setup
+## Quick Start
 
-This repository uses Docker to simplify the documentation setup process. To get started:
+This repository contains documentation for the AI-Native Programming Paradigm. To get started:
 
 1. Clone this repository
-2. Run the documentation server with Docker Compose
+2. Browse the documentation directly on GitHub or locally in your preferred Markdown viewer
 
-```bash
-docker compose up -d
-```
-
-3. Access the documentation at http://localhost:8000
-
-That's it! The documentation will be automatically rebuilt whenever you make changes to the markdown files.
+The documentation is written in Markdown format and can be viewed directly on GitHub without any additional setup.
 
 ## File Structure
 
 ```
 .
-├── docker-compose.yml    # Docker Compose configuration
-├── Dockerfile            # Docker container definition
-├── mkdocs.yml            # MkDocs configuration
 ├── docs/                 # Documentation files (Markdown)
 │   ├── index.md          # Home page
 │   ├── getting-started/  # Getting started guides
@@ -36,39 +27,17 @@ That's it! The documentation will be automatically rebuilt whenever you make cha
 ### Adding New Pages
 
 1. Create a new markdown file in the appropriate directory under `docs/`
-2. Add the page to the navigation menu in `mkdocs.yml`
+2. Link to the new page from existing pages or update the navigation structure in relevant files
 
 ### Editing Existing Pages
 
-Simply edit the markdown files in the `docs/` directory. The changes will be reflected in the documentation site immediately.
+Simply edit the markdown files in the `docs/` directory. The changes will be reflected on GitHub after committing and pushing your changes.
 
-### Stopping the Documentation Server
+## GitHub Pages
 
-To stop the documentation server:
+The documentation is viewable directly on GitHub. You can navigate through the documentation by browsing the repository's file structure or by following links between pages.
 
-```bash
-docker compose down
-```
-
-## Building for Production
-
-To build a static version of the documentation:
-
-```bash
-docker compose run --rm mkdocs mkdocs build
-```
-
-The built documentation will be available in the `site/` directory.
-
-## GitHub Pages Deployment
-
-To deploy to GitHub Pages:
-
-```bash
-docker compose run --rm mkdocs mkdocs gh-deploy
-```
-
-This will build the documentation and push it to the `gh-pages` branch of your repository.
+GitHub automatically renders Markdown files, making it easy to read the documentation without any additional tools or setup.
 
 ## License
 
